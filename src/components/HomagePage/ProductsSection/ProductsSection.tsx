@@ -19,8 +19,6 @@ export default function ProductsSection() {
   })
   const [orderConfirmed, setOrderConfirmed] = useState(false)
 
-
-
   const filteredProducts = products.filter(product => product.category === selectedCategory)
 
   // Fonctions du panier
@@ -112,74 +110,24 @@ export default function ProductsSection() {
     }
   }
 
-
-
   return (
-    <section style={{
-      padding: '4rem 2rem',
-      background: 'linear-gradient(to bottom, #f0fdf4, #ffffff)',
-      minHeight: '80vh'
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}>
+    <section className="py-16 px-4 sm:px-8 bg-gradient-to-b from-green-50 to-white min-h-[80vh]">
+      <div className="max-w-7xl mx-auto">
         {/* Titre de la section */}
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '3rem'
-        }}>
-          <h2 style={{
-            fontSize: 'clamp(2rem, 5vw, 3rem)',
-            fontWeight: 'bold',
-            color: '#064e3b',
-            marginBottom: '1rem'
-          }}>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-800 mb-4">
             Nos Produits de Manioc
           </h2>
-          <p style={{
-            fontSize: '1.2rem',
-            color: '#047857',
-            maxWidth: '600px',
-            margin: '0 auto',
-            lineHeight: '1.6'
-          }}>
+          <p className="text-lg sm:text-xl text-emerald-700 max-w-2xl mx-auto leading-relaxed">
             Découvrez notre gamme complète de produits à base de manioc gabonais
           </p>
         </div>
 
         {/* Bouton panier fixe */}
-        <div style={{
-          position: 'fixed',
-          top: '50%',
-          right: '2rem',
-          transform: 'translateY(-50%)',
-          zIndex: 1000
-        }}>
+        <div className="fixed top-1/2 right-4 lg:right-8 transform -translate-y-1/2 z-50">
           <button
             onClick={() => setShowCart(!showCart)}
-            style={{
-              background: 'linear-gradient(135deg, #059669, #047857)',
-              color: 'black',
-              border: 'none',
-              borderRadius: '50%',
-              width: '60px',
-              height: '60px',
-              fontSize: '1.5rem',
-              cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-              transition: 'transform 0.3s ease',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)'
-            }}
+            className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-black border-none rounded-full w-14 h-14 lg:w-16 lg:h-16 text-xl lg:text-2xl cursor-pointer shadow-lg transition-transform duration-300 relative flex items-center justify-center hover:scale-110"
           >
             <CartOutline
               color="yellow"
@@ -187,21 +135,7 @@ export default function ProductsSection() {
               height="28px"
             />
             {getTotalItems() > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                background: '#ef4444',
-                color: 'white',
-                borderRadius: '50%',
-                width: '24px',
-                height: '24px',
-                fontSize: '0.8rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold'
-              }}>
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center font-bold">
                 {getTotalItems()}
               </span>
             )}
@@ -210,758 +144,323 @@ export default function ProductsSection() {
 
         {/* Panier coulissant */}
         {showCart && !showCheckout && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            right: 0,
-            width: '400px',
-            height: '100vh',
-            background: 'white',
-            boxShadow: '-5px 0 15px rgba(0,0,0,0.1)',
-            zIndex: 1001,
-            padding: '2rem',
-            overflowY: 'auto'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '2rem',
-              paddingBottom: '1rem',
-              borderBottom: '2px solid #e5e7eb'
-            }}>
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                color: '#064e3b',
-                margin: 0
-              }}>
-                Panier ({getTotalItems()})
-              </h3>
-              <button
-                onClick={() => setShowCart(false)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                  color: '#6b7280'
-                }}
-              >
-                ✕
-              </button>
-            </div>
-
-            {cart.length === 0 ? (
-              <div style={{
-                textAlign: 'center',
-                padding: '3rem 0',
-                color: '#6b7280'
-              }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛒</div>
-                <p>Votre panier est vide</p>
-                <p style={{ fontSize: '0.9rem' }}>Ajoutez des produits pour commencer</p>
-              </div>
-            ) : (
-              <>
-                <div style={{
-                  marginBottom: '2rem'
-                }}>
-                  {cart.map(item => (
-                    <div key={item.product.id} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '1rem',
-                      padding: '1rem',
-                      background: '#f9fafb',
-                      borderRadius: '10px',
-                      marginBottom: '1rem'
-                    }}>
-                      <div style={{ 
-                        width: '60px', 
-                        height: '60px',
-                        overflow: 'hidden',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: '#f0fdf4'
-                      }}>
-                        <img 
-                          src={item.product.image} 
-                          alt={item.product.name}
-                          style={{ 
-                            width: '100%', 
-                            height: '100%', 
-                            objectFit: 'cover'
-                          }}
-                        />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <h4 style={{
-                          fontSize: '1rem',
-                          fontWeight: '600',
-                          color: '#064e3b',
-                          margin: '0 0 0.25rem 0'
-                        }}>
-                          {item.product.name}
-                        </h4>
-                        <p style={{
-                          fontSize: '0.9rem',
-                          color: '#059669',
-                          fontWeight: '600',
-                          margin: 0
-                        }}>
-                          {item.product.priceValue.toLocaleString()} FCFA
-                        </p>
-                      </div>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                      }}>
-                        <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                          style={{
-                            background: '#e5e7eb',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '30px',
-                            height: '30px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          -
-                        </button>
-                        <span style={{
-                          fontWeight: '600',
-                          minWidth: '20px',
-                          textAlign: 'center'
-                        }}>
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          style={{
-                            background: '#059669',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '30px',
-                            height: '30px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                      <button
-                        onClick={() => removeFromCart(item.product.id)}
-                        style={{
-                          background: '#ef4444',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '50%',
-                          width: '30px',
-                          height: '30px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{
-                  borderTop: '2px solid #e5e7eb',
-                  paddingTop: '1rem'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '0.5rem'
-                  }}>
-                    <span style={{ fontSize: '1rem', color: '#6b7280' }}>
-                      Sous-total:
-                    </span>
-                    <span style={{
-                      fontSize: '1rem',
-                      fontWeight: '600',
-                      color: '#064e3b'
-                    }}>
-                      {getTotalPrice().toLocaleString()} FCFA
-                    </span>
-                  </div>
-                  
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '1rem'
-                  }}>
-                    <span style={{ fontSize: '1rem', color: '#6b7280' }}>
-                      Livraison:
-                    </span>
-                    <span style={{
-                      fontSize: '1rem',
-                      fontWeight: '600',
-                      color: getDeliveryFee() === 0 ? '#10b981' : '#064e3b'
-                    }}>
-                      {getDeliveryFee() === 0 ? 'GRATUITE' : `${getDeliveryFee().toLocaleString()} FCFA`}
-                    </span>
-                  </div>
-
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '1.5rem',
-                    paddingTop: '0.5rem',
-                    borderTop: '1px solid #e5e7eb'
-                  }}>
-                    <span style={{
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                      color: '#064e3b'
-                    }}>
-                      Total:
-                    </span>
-                    <span style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 'bold',
-                      color: '#059669'
-                    }}>
-                      {getFinalTotal().toLocaleString()} FCFA
-                    </span>
-                  </div>
-                  
-                  <button 
-                    onClick={() => setShowCheckout(true)}
-                    style={{
-                      width: '100%',
-                      background: 'linear-gradient(135deg, #059669, #047857)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '10px',
-                      padding: '1rem',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'transform 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.02)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)'
-                    }}
-                  >
-                    Finaliser la commande
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Page de checkout */}
-        {showCheckout && !orderConfirmed && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.5)',
-            zIndex: 1002,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem'
-          }}>
-            <div style={{
-              background: 'white',
-              borderRadius: '15px',
-              padding: '2rem',
-              maxWidth: '600px',
-              width: '100%',
-              maxHeight: '90vh',
-              overflowY: 'auto'
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '2rem',
-                paddingBottom: '1rem',
-                borderBottom: '2px solid #e5e7eb'
-              }}>
-                <h2 style={{
-                  fontSize: '1.8rem',
-                  fontWeight: 'bold',
-                  color: '#064e3b',
-                  margin: 0
-                }}>
-                  Finaliser votre commande
-                </h2>
+          <div className="fixed inset-0 z-50 lg:inset-y-0 lg:right-0 lg:left-auto">
+            {/* Overlay pour mobile */}
+            <div className="lg:hidden absolute inset-0 bg-black/50" onClick={() => setShowCart(false)}></div>
+            
+            <div className="relative lg:static bg-white w-full h-full lg:w-96 lg:h-screen shadow-xl p-4 sm:p-8 overflow-y-auto">
+              <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-gray-200">
+                <h3 className="text-xl lg:text-2xl font-bold text-emerald-800">
+                  Panier ({getTotalItems()})
+                </h3>
                 <button
-                  onClick={() => setShowCheckout(false)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '1.5rem',
-                    cursor: 'pointer',
-                    color: '#6b7280'
-                  }}
+                  onClick={() => setShowCart(false)}
+                  className="bg-none border-none text-xl cursor-pointer text-gray-500 hover:text-gray-700"
                 >
                   ✕
                 </button>
               </div>
 
-              {/* Informations client */}
-              <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{
-                  fontSize: '1.3rem',
-                  fontWeight: '600',
-                  color: '#064e3b',
-                  marginBottom: '1rem'
-                }}>
-                  Vos informations
-                </h3>
-                
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '1rem',
-                  marginBottom: '1rem'
-                }}>
-                  <input
-                    type="text"
-                    placeholder="Prénom *"
-                    value={customerInfo.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    style={{
-                      padding: '0.75rem',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '8px',
-                      fontSize: '1rem',
-                      outline: 'none',
-                      transition: 'border-color 0.3s'
-                    }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Nom *"
-                    value={customerInfo.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    style={{
-                      padding: '0.75rem',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '8px',
-                      fontSize: '1rem',
-                      outline: 'none',
-                      transition: 'border-color 0.3s'
-                    }}
-                  />
+              {cart.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <div className="text-5xl mb-4">🛒</div>
+                  <p className="text-lg">Votre panier est vide</p>
+                  <p className="text-sm">Ajoutez des produits pour commencer</p>
                 </div>
+              ) : (
+                <>
+                  <div className="mb-8">
+                    {cart.map(item => (
+                      <div key={item.product.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg mb-4">
+                        <div className="w-15 h-15 overflow-hidden rounded-lg flex items-center justify-center bg-green-50">
+                          <img 
+                            src={item.product.image} 
+                            alt={item.product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-base font-semibold text-emerald-800 mb-1">
+                            {item.product.name}
+                          </h4>
+                          <p className="text-sm text-emerald-600 font-semibold">
+                            {item.product.priceValue.toLocaleString()} FCFA
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            className="bg-gray-200 border-none rounded-full w-8 h-8 cursor-pointer flex items-center justify-center hover:bg-gray-300"
+                          >
+                            -
+                          </button>
+                          <span className="font-semibold min-w-[20px] text-center">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            className="bg-emerald-600 text-white border-none rounded-full w-8 h-8 cursor-pointer flex items-center justify-center hover:bg-emerald-700"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => removeFromCart(item.product.id)}
+                          className="bg-red-500 text-white border-none rounded-full w-8 h-8 cursor-pointer flex items-center justify-center hover:bg-red-600"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
 
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '1rem',
-                  marginBottom: '1rem'
-                }}>
-                  <input
-                    type="tel"
-                    placeholder="Téléphone * (+241...)"
-                    value={customerInfo.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    style={{
-                      padding: '0.75rem',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '8px',
-                      fontSize: '1rem',
-                      outline: 'none',
-                      transition: 'border-color 0.3s'
-                    }}
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email (optionnel)"
-                    value={customerInfo.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    style={{
-                      padding: '0.75rem',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '8px',
-                      fontSize: '1rem',
-                      outline: 'none',
-                      transition: 'border-color 0.3s'
-                    }}
-                  />
-                </div>
-
-                <textarea
-                  placeholder="Adresse de livraison complète *"
-                  value={customerInfo.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  rows={3}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '1rem',
-                    outline: 'none',
-                    resize: 'vertical',
-                    marginBottom: '1rem'
-                  }}
-                />
-
-                <select
-                  value={customerInfo.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '1rem',
-                    outline: 'none'
-                  }}
-                >
-                  <option value="Libreville">Libreville</option>
-                  <option value="Port-Gentil">Port-Gentil</option>
-                  <option value="Franceville">Franceville</option>
-                  <option value="Oyem">Oyem</option>
-                  <option value="Moanda">Moanda</option>
-                  <option value="Lambaréné">Lambaréné</option>
-                </select>
-              </div>
-
-              {/* Mode de paiement */}
-              <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{
-                  fontSize: '1.3rem',
-                  fontWeight: '600',
-                  color: '#064e3b',
-                  marginBottom: '1rem'
-                }}>
-                  Mode de paiement
-                </h3>
-                
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem'
-                }}>
-                  {paymentMethods.map(method => (
-                    <label key={method.id} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      padding: '1rem',
-                      border: customerInfo.paymentMethod === method.id ? '2px solid #059669' : '2px solid #e5e7eb',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      background: customerInfo.paymentMethod === method.id ? '#f0fdf4' : 'white'
-                    }}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={method.id}
-                        checked={customerInfo.paymentMethod === method.id}
-                        onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        style={{ accentColor: '#059669' }}
-                      />
-                      <span style={{ fontSize: '1rem', fontWeight: '500' }}>
-                                                      {method.name}
+                  <div className="border-t-2 border-gray-200 pt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-base text-gray-600">Sous-total:</span>
+                      <span className="text-base font-semibold text-emerald-700">
+                        {getTotalPrice().toLocaleString()} FCFA
                       </span>
-                      {method.popular && (
-                        <span style={{
-                          background: '#059669',
-                          color: 'white',
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '12px',
-                          fontSize: '0.8rem',
-                          fontWeight: '600'
-                        }}>
-                          Populaire
-                        </span>
-                      )}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Résumé de commande */}
-              <div style={{
-                background: '#f9fafb',
-                padding: '1.5rem',
-                borderRadius: '10px',
-                marginBottom: '2rem'
-              }}>
-                <h3 style={{
-                  fontSize: '1.3rem',
-                  fontWeight: '600',
-                  color: '#064e3b',
-                  marginBottom: '1rem'
-                }}>
-                  Résumé de votre commande
-                </h3>
-                
-                {cart.map(item => (
-                  <div key={item.product.id} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '0.5rem'
-                  }}>
-                    <span style={{ fontSize: '0.9rem' }}>
-                      {item.product.name} x{item.quantity}
-                    </span>
-                    <span style={{ fontWeight: '600' }}>
-                      {(item.product.priceValue * item.quantity).toLocaleString()} FCFA
-                    </span>
+                    </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-base text-gray-600">Livraison:</span>
+                      <span className="text-base font-semibold text-emerald-700">
+                        {getDeliveryFee() === 0 ? 'Gratuit' : `${getDeliveryFee().toLocaleString()} FCFA`}
+                      </span>
+                    </div>
+                    {getDeliveryFee() === 0 && (
+                      <p className="text-xs text-green-600 mb-4">🎉 Livraison gratuite !</p>
+                    )}
+                    <div className="flex justify-between items-center mb-6 text-lg font-bold text-emerald-800">
+                      <span>Total:</span>
+                      <span>{getFinalTotal().toLocaleString()} FCFA</span>
+                    </div>
+                    
+                    <button
+                      onClick={() => setShowCheckout(true)}
+                      className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white border-none rounded-lg py-4 text-lg font-semibold cursor-pointer hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300"
+                    >
+                      Passer la commande
+                    </button>
                   </div>
-                ))}
-                
-                <div style={{
-                  borderTop: '1px solid #e5e7eb',
-                  paddingTop: '0.75rem',
-                  marginTop: '0.75rem'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '0.5rem'
-                  }}>
-                    <span>Livraison:</span>
-                    <span style={{ color: getDeliveryFee() === 0 ? '#10b981' : '#064e3b' }}>
-                      {getDeliveryFee() === 0 ? 'GRATUITE' : `${getDeliveryFee().toLocaleString()} FCFA`}
-                    </span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '1.2rem',
-                    fontWeight: 'bold',
-                    color: '#059669'
-                  }}>
-                    <span>Total:</span>
-                    <span>{getFinalTotal().toLocaleString()} FCFA</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bouton de confirmation */}
-              <button
-                onClick={handleOrderSubmit}
-                disabled={!validateForm()}
-                style={{
-                  width: '100%',
-                  background: validateForm() 
-                    ? 'linear-gradient(135deg, #059669, #047857)' 
-                    : '#d1d5db',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '1rem',
-                  fontSize: '1.2rem',
-                  fontWeight: '600',
-                  cursor: validateForm() ? 'pointer' : 'not-allowed',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                Confirmer la commande
-              </button>
-              
-              {!validateForm() && (
-                <p style={{
-                  textAlign: 'center',
-                  color: '#ef4444',
-                  fontSize: '0.9rem',
-                  marginTop: '0.5rem'
-                }}>
-                  Veuillez remplir tous les champs obligatoires (*)
-                </p>
+                </>
               )}
             </div>
           </div>
         )}
 
-        {/* Confirmation de commande */}
-        {orderConfirmed && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.7)',
-            zIndex: 1003,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem'
-          }}>
-            <div style={{
-              background: 'white',
-              borderRadius: '15px',
-              padding: '3rem',
-              textAlign: 'center',
-              maxWidth: '500px',
-              width: '100%'
-            }}>
-              <div style={{
-                fontSize: '4rem',
-                marginBottom: '1rem'
-              }}>
-                ✅
+        {/* Modal de checkout */}
+        {showCheckout && (
+          <div className="fixed inset-0 z-50">
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/50" onClick={() => setShowCheckout(false)}></div>
+            
+            <div className="relative bg-white w-full h-full lg:w-2/3 lg:max-w-4xl lg:h-4/5 lg:mx-auto lg:my-8 lg:rounded-lg shadow-xl p-4 sm:p-8 overflow-y-auto">
+              <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-gray-200">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-emerald-800">
+                  Finaliser votre commande
+                </h2>
+                <button
+                  onClick={() => setShowCheckout(false)}
+                  className="bg-none border-none text-xl cursor-pointer text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
               </div>
-              <h2 style={{
-                fontSize: '2rem',
-                fontWeight: 'bold',
-                color: '#059669',
-                marginBottom: '1rem'
-              }}>
-                Commande confirmée !
-              </h2>
-              <p style={{
-                fontSize: '1.1rem',
-                color: '#6b7280',
-                marginBottom: '1.5rem',
-                lineHeight: '1.6'
-              }}>
-                Votre commande a été envoyée avec succès. Vous recevrez un appel de confirmation dans les plus brefs délais.
-              </p>
-              <div style={{
-                background: '#f0fdf4',
-                padding: '1rem',
-                borderRadius: '8px',
-                border: '1px solid #bbf7d0'
-              }}>
-                <p style={{
-                  fontSize: '0.9rem',
-                  color: '#047857',
-                  margin: 0
-                }}>
-                  📞 Nous vous contacterons au <strong>{customerInfo.phone}</strong><br/>
-                  🚚 Livraison prévue sous 24-48h à {customerInfo.city}
-                </p>
-              </div>
+
+              {orderConfirmed ? (
+                <div className="text-center py-16">
+                  <div className="text-6xl mb-8">✅</div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-emerald-800 mb-4">
+                    Commande confirmée !
+                  </h3>
+                  <p className="text-lg text-gray-600 mb-8">
+                    Nous vous contacterons dans les plus brefs délais pour la livraison.
+                  </p>
+                  <div className="bg-green-50 p-6 rounded-lg">
+                    <p className="text-emerald-700 font-semibold">
+                      📞 Vous recevrez un appel de confirmation sous 30 minutes
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid lg:grid-cols-2 gap-8">
+                  {/* Informations client */}
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-emerald-800 mb-6">
+                      Vos informations
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <input
+                        type="text"
+                        placeholder="Prénom *"
+                        value={customerInfo.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        className="p-3 border-2 border-gray-200 rounded-lg text-base outline-none transition-colors focus:border-emerald-500"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Nom *"
+                        value={customerInfo.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        className="p-3 border-2 border-gray-200 rounded-lg text-base outline-none transition-colors focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <input
+                        type="tel"
+                        placeholder="Téléphone * (+241...)"
+                        value={customerInfo.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        className="p-3 border-2 border-gray-200 rounded-lg text-base outline-none transition-colors focus:border-emerald-500"
+                      />
+                      <input
+                        type="email"
+                        placeholder="Email (optionnel)"
+                        value={customerInfo.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        className="p-3 border-2 border-gray-200 rounded-lg text-base outline-none transition-colors focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <textarea
+                      placeholder="Adresse de livraison complète *"
+                      value={customerInfo.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      rows={3}
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg text-base outline-none resize-y mb-4 transition-colors focus:border-emerald-500"
+                    />
+
+                    <select
+                      value={customerInfo.city}
+                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg text-base outline-none transition-colors focus:border-emerald-500"
+                    >
+                      <option value="Libreville">Libreville</option>
+                      <option value="Port-Gentil">Port-Gentil</option>
+                      <option value="Franceville">Franceville</option>
+                      <option value="Oyem">Oyem</option>
+                      <option value="Moanda">Moanda</option>
+                      <option value="Lambaréné">Lambaréné</option>
+                    </select>
+
+                    {/* Mode de paiement */}
+                    <div className="mt-8">
+                      <h3 className="text-lg sm:text-xl font-semibold text-emerald-800 mb-4">
+                        Mode de paiement
+                      </h3>
+                      
+                      <div className="flex flex-col gap-3">
+                        {paymentMethods.map(method => (
+                          <label key={method.id} className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 ${
+                            customerInfo.paymentMethod === method.id 
+                              ? 'border-emerald-600 bg-green-50' 
+                              : 'border-gray-200 bg-white hover:border-gray-300'
+                          }`}>
+                            <input
+                              type="radio"
+                              name="paymentMethod"
+                              value={method.id}
+                              checked={customerInfo.paymentMethod === method.id}
+                              onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
+                              className="accent-emerald-600"
+                            />
+                            <span className="text-base font-medium">{method.name}</span>
+                            {method.popular && (
+                              <span className="bg-emerald-600 text-white px-2 py-1 rounded-xl text-xs font-semibold">
+                                Populaire
+                              </span>
+                            )}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Résumé de commande */}
+                  <div className="bg-gray-50 p-6 rounded-lg h-fit">
+                    <h3 className="text-lg sm:text-xl font-semibold text-emerald-800 mb-6">
+                      Résumé de la commande
+                    </h3>
+                    
+                    <div className="space-y-4 mb-6">
+                      {cart.map(item => (
+                        <div key={item.product.id} className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">
+                            {item.product.name} x{item.quantity}
+                          </span>
+                          <span className="text-sm font-semibold text-emerald-700">
+                            {(item.product.priceValue * item.quantity).toLocaleString()} FCFA
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="border-t pt-4 space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Sous-total:</span>
+                        <span className="font-semibold">{getTotalPrice().toLocaleString()} FCFA</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Livraison:</span>
+                        <span className="font-semibold">
+                          {getDeliveryFee() === 0 ? 'Gratuit' : `${getDeliveryFee().toLocaleString()} FCFA`}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-lg font-bold text-emerald-800 pt-2 border-t">
+                        <span>Total:</span>
+                        <span>{getFinalTotal().toLocaleString()} FCFA</span>
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={handleOrderSubmit}
+                      disabled={!validateForm()}
+                      className={`w-full mt-6 py-4 rounded-lg text-lg font-semibold transition-all duration-300 ${
+                        validateForm()
+                          ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-700 hover:to-emerald-800 cursor-pointer'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      Confirmer la commande
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* Overlay pour fermer le panier */}
-        {(showCart && !showCheckout) && (
-          <div
-            onClick={() => setShowCart(false)}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: '400px',
-              bottom: 0,
-              background: 'rgba(0,0,0,0.5)',
-              zIndex: 1000
-            }}
-          />
-        )}
-
-        {/* Contenu principal : deux colonnes */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '300px 1fr',
-          gap: '3rem',
-          alignItems: 'start'
-        }}>
+        {/* Grille des catégories et produits */}
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr] gap-8 items-start">
           {/* Colonne gauche : Catégories */}
-          <div style={{
-            background: 'white',
-            borderRadius: '15px',
-            padding: '2rem',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-            border: '1px solid #e5e7eb',
-            position: 'sticky',
-            top: '2rem'
-          }}>
-            <h3 style={{
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              color: '#064e3b',
-              marginBottom: '1.5rem',
-              textAlign: 'center'
-            }}>
+          <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-200 lg:sticky lg:top-8">
+            <h3 className="text-xl lg:text-2xl font-bold text-emerald-800 mb-6 text-center">
               Catégories
             </h3>
             
-            <ul style={{
-              listStyle: 'none',
-              padding: 0,
-              margin: 0
-            }}>
+            <ul className="list-none p-0 m-0 space-y-2">
               {categories.map(category => (
-                <li key={category.id} style={{ marginBottom: '0.5rem' }}>
+                <li key={category.id}>
                   <button
                     onClick={() => setSelectedCategory(category.id)}
-                    style={{
-                      width: '100%',
-                      padding: '1rem 1.5rem',
-                      border: 'none',
-                      borderRadius: '10px',
-                      background: selectedCategory === category.id 
-                        ? 'linear-gradient(135deg, #059669, #047857)' 
-                        : 'transparent',
-                      color: selectedCategory === category.id ? 'white' : '#374151',
-                      fontSize: '1rem',
-                      fontWeight: selectedCategory === category.id ? '600' : '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      textAlign: 'left'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (selectedCategory !== category.id) {
-                        e.currentTarget.style.background = '#f3f4f6'
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedCategory !== category.id) {
-                        e.currentTarget.style.background = 'transparent'
-                      }
-                    }}
+                    className={`w-full p-4 lg:p-6 border-none rounded-lg font-medium cursor-pointer transition-all duration-300 flex items-center gap-3 text-left ${
+                      selectedCategory === category.id 
+                        ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold' 
+                        : 'bg-transparent text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     {category.icon.startsWith('/') ? (
                       <img 
                         src={category.icon} 
                         alt={category.name}
-                        style={{ 
-                          width: '24px', 
-                          height: '24px', 
-                          objectFit: 'contain',
-                          borderRadius: '4px'
-                        }}
+                        className="w-6 h-6 object-contain rounded"
                       />
                     ) : (
-                      <span style={{ fontSize: '1.2rem' }}>{category.icon}</span>
+                      <span className="text-lg">{category.icon}</span>
                     )}
-                    {category.name}
+                    <span className="text-sm lg:text-base">{category.name}</span>
                   </button>
                 </li>
               ))}
@@ -970,109 +469,41 @@ export default function ProductsSection() {
 
           {/* Colonne droite : Produits */}
           <div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '2rem'
-            }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {filteredProducts.map(product => (
                 <div
                   key={product.id}
-                  style={{
-                    background: 'white',
-                    borderRadius: '15px',
-                    overflow: 'hidden',
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                    border: '1px solid #e5e7eb',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-8px)'
-                    e.currentTarget.style.boxShadow = '0 15px 30px rgba(0,0,0,0.15)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.1)'
-                  }}
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 transition-all duration-300 cursor-pointer hover:-translate-y-2 hover:shadow-xl"
                 >
                   {/* Image du produit */}
-                  <div style={{
-                    height: '150px',
-                    background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderBottom: '1px solid #e5e7eb',
-                    overflow: 'hidden'
-                  }}>
+                  <div className="h-40 bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center border-b border-gray-200 overflow-hidden">
                     <img 
                       src={product.image} 
                       alt={product.name}
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'cover'
-                      }}
+                      className="w-full h-full object-cover"
                     />
                   </div>
 
                   {/* Contenu du produit */}
-                  <div style={{
-                    padding: '1.5rem'
-                  }}>
-                    <h4 style={{
-                      fontSize: '1.25rem',
-                      fontWeight: 'bold',
-                      color: '#064e3b',
-                      marginBottom: '0.5rem'
-                    }}>
+                  <div className="p-4 lg:p-6">
+                    <h4 className="text-lg lg:text-xl font-bold text-emerald-800 mb-2">
                       {product.name}
                     </h4>
                     
-                    <p style={{
-                      fontSize: '0.9rem',
-                      color: '#6b7280',
-                      lineHeight: '1.5',
-                      marginBottom: '1rem'
-                    }}>
+                    <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-3">
                       {product.description}
                     </p>
                     
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <span style={{
-                        fontSize: '1.1rem',
-                        fontWeight: 'bold',
-                        color: '#059669'
-                      }}>
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-bold text-emerald-600">
                         {product.price}
                       </span>
                       
                       <button 
                         onClick={() => addToCart(product)}
-                        style={{
-                          background: 'linear-gradient(135deg, #059669, #047857)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '8px',
-                          padding: '0.5rem 1rem',
-                          fontSize: '0.9rem',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'scale(1.05)'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'scale(1)'
-                        }}
+                        className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white border-none rounded-lg px-4 py-2 text-sm font-semibold cursor-pointer transition-all duration-300 hover:scale-105 hover:from-emerald-700 hover:to-emerald-800"
                       >
-                        Ajouter au panier
+                        Ajouter
                       </button>
                     </div>
                   </div>

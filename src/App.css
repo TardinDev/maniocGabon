@@ -1,1 +1,129 @@
 @import "tailwindcss";
+
+/* Styles personnalisés pour la responsivité */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Animation pour le menu mobile */
+@media (max-width: 768px) {
+  .mobile-menu-transition {
+    transition: transform 0.3s ease-in-out;
+  }
+}
+
+/* Hauteurs personnalisées pour Tailwind */
+.h-15 {
+  height: 3.75rem;
+}
+
+.w-15 {
+  width: 3.75rem;
+}
+
+.h-25 {
+  height: 6.25rem;
+}
+
+.w-25 {
+  width: 6.25rem;
+}
+
+.w-30 {
+  width: 7.5rem;
+}
+
+.h-30 {
+  height: 7.5rem;
+}
+
+.w-38 {
+  width: 9.5rem;
+}
+
+.h-15 {
+  height: 3.75rem;
+}
+
+/* Styles pour le z-index */
+.z-5 {
+  z-index: 5;
+}
+
+.z-8 {
+  z-index: 8;
+}
+
+.z-15 {
+  z-index: 15;
+}
+
+/* Scroll smooth pour toute la page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Amélioration des focus pour l'accessibilité */
+input:focus, 
+textarea:focus, 
+select:focus,
+button:focus {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+}
+
+/* Animation pour les cartes de produits */
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive breakpoints personnalisés */
+@media (max-width: 640px) {
+  .text-responsive-sm {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-responsive-md {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive-lg {
+    font-size: 1.125rem;
+  }
+}
+
+/* Media queries pour le Footer responsive */
+@media (min-width: 768px) {
+  .footer-bottom {
+    flex-direction: row !important;
+    text-align: left !important;
+  }
+  
+  .footer-newsletter {
+    flex-direction: row !important;
+  }
+  
+  .footer-contact {
+    text-align: left !important;
+  }
+  
+  .footer-certifications {
+    justify-content: flex-start !important;
+  }
+  
+  .footer-section h3 {
+    text-align: left !important;
+  }
+  
+  .footer-links {
+    align-items: flex-start !important;
+  }
+}

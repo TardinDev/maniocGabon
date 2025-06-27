@@ -37,6 +37,7 @@ export interface CustomerInfo {
 export interface NavigationLink {
   label: string
   href: string
+  id: string
 }
 
 // Types pour les réseaux sociaux

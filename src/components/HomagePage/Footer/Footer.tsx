@@ -4,7 +4,7 @@ import { footerLinks, socialNetworks } from '../../../data'
 export default function Footer() {
 
   return (
-    <footer style={{
+    <footer id="contact" style={{
       background: 'linear-gradient(135deg, #064e3b 0%, #047857 50%, #065f46 100%)',
       color: 'white',
       padding: '4rem 2rem 2rem',
