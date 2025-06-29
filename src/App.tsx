@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { Toaster } from 'react-hot-toast'
 import './App.css'
+import { AuthProvider } from './contexts/AuthContext.tsx'
 import Header from './components/HomagePage/Header/Header'
 import HeroSection from './components/HomagePage/HeroSection/HeroSection'
 import ProductsSection from './components/HomagePage/ProductsSection/ProductsSection'
@@ -60,11 +62,35 @@ function App() {
   }
 
   return (
-    <>
-      <Header onNavigate={handleNavigation} currentPage={currentPage} />
-      {renderPage()}
-      <Footer />
-    </>
+    <AuthProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Header onNavigate={handleNavigation} currentPage={currentPage} />
+        {renderPage()}
+        <Footer />
+        
+        {/* Notifications Toast */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              style: {
+                background: '#10B981',
+              },
+            },
+            error: {
+              style: {
+                background: '#EF4444',
+              },
+            },
+          }}
+        />
+      </div>
+    </AuthProvider>
   )
 }
 
