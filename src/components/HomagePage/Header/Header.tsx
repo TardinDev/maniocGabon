@@ -6,7 +6,7 @@ import { SignupModal } from '../../AuthPage/SignupModal'
 import { UserDropdown } from '../../AuthPage/UserDropdown'
 import { testSupabaseConnection, testDatabase } from '../../../utils/testSupabase'
 
-type Page = 'accueil' | 'culture' | 'nutrition' | 'recettes' | 'contact'
+type Page = 'accueil' | 'culture' | 'nutrition' | 'recettes' | 'contact' | 'profile' | 'orders' | 'settings' | 'admin-dashboard' | 'admin-products' | 'admin-users' | 'admin-orders'
 
 interface HeaderProps {
   onNavigate: (page: Page) => void
@@ -95,7 +95,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
           {/* Zone d'authentification */}
           {user ? (
             // Utilisateur connecté : afficher le dropdown
-            <UserDropdown />
+            <UserDropdown onNavigate={onNavigate} />
           ) : (
             // Utilisateur non connecté : afficher les boutons de connexion/inscription
             <div className="flex items-center gap-3">
@@ -160,7 +160,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
                       </p>
                     </div>
                   </div>
-                  <UserDropdown />
+                  <UserDropdown onNavigate={onNavigate} />
                 </div>
               ) : (
                 // Utilisateur non connecté sur mobile

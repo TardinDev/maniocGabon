@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import type { Product, CartItem, CustomerInfo } from '../../../types'
 import { products, categories, paymentMethods } from '../../../data'
 import { CartOutline } from 'react-ionicons'

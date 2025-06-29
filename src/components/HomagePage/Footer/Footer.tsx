@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { footerLinks, socialNetworks } from '../../../data'
 
 export default function Footer() {

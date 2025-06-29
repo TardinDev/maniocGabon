@@ -3,13 +3,17 @@ import type { ReactNode } from 'react'
 import type { User, Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
-import { AuthContext, type AuthContextType } from './AuthContext'
+import { AuthContext, type AuthContextType, type UserRole } from './AuthContext'
 
 // Provider du contexte
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState<UserRole>('user')
+
+  // Vérifier si l'utilisateur est admin
+  const isAdmin = userRole === 'admin'
 
   // Fonction de connexion
   const signIn = async (email: string, password: string) => {
@@ -115,10 +119,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Écouter les changements d'authentification
   useEffect(() => {
+    // Fonction pour récupérer le rôle depuis Supabase (table profiles)
+    const fetchUserRole = async (userId: string): Promise<UserRole> => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', userId)
+          .single()
+
+        if (error) {
+          console.warn('Erreur lors de la récupération du rôle:', error)
+          return 'user' // Rôle par défaut en cas d'erreur
+        }
+
+        return (data?.role as UserRole) || 'user'
+      } catch (error) {
+        console.warn('Erreur lors de la récupération du rôle:', error)
+        return 'user'
+      }
+    }
+
     // Récupérer la session initiale
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
+      
+      // Récupérer le rôle si l'utilisateur est connecté
+      if (session?.user?.id) {
+        const role = await fetchUserRole(session.user.id)
+        setUserRole(role)
+      } else {
+        setUserRole('user')
+      }
+      
       setLoading(false)
     })
 
@@ -127,12 +161,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       async (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
+
+        // Récupérer le rôle si l'utilisateur est connecté
+        if (session?.user?.id) {
+          const role = await fetchUserRole(session.user.id)
+          setUserRole(role)
+        } else {
+          setUserRole('user')
+        }
+
         setLoading(false)
 
         if (event === 'SIGNED_IN') {
           console.log('✅ Utilisateur connecté')
         } else if (event === 'SIGNED_OUT') {
           console.log('👋 Utilisateur déconnecté')
+          setUserRole('user') // Reset le rôle à la déconnexion
         }
       }
     )
@@ -144,6 +188,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     session,
     loading,
+    isAdmin,
+    userRole,
     signIn,
     signUp,
     signOut,

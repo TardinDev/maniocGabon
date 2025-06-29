@@ -1,9 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
-import { User, LogOut, Settings, ShoppingBag, ChevronDown } from 'lucide-react'
+import { User, LogOut, Settings, ShoppingBag, ChevronDown, Shield } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 
-export function UserDropdown() {
-  const { user, signOut } = useAuth()
+type AdminPage = 'admin-dashboard' | 'admin-products' | 'admin-users' | 'admin-orders'
+type UserPage = 'profile' | 'orders' | 'settings'
+
+interface UserDropdownProps {
+  onNavigate?: (page: UserPage | AdminPage) => void
+}
+
+export function UserDropdown({ onNavigate }: UserDropdownProps = {}) {
+  const { user, signOut, isAdmin } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -37,9 +44,27 @@ export function UserDropdown() {
     return user?.email?.split('@')[0] || 'Utilisateur'
   }
 
+  // Naviguer vers une page utilisateur
+  const handleUserNavigation = (page: UserPage) => {
+    setIsOpen(false)
+    if (onNavigate) {
+      onNavigate(page)
+    }
+  }
+
+  // Naviguer vers une page admin
+  const handleAdminNavigation = (page: AdminPage) => {
+    setIsOpen(false)
+    if (onNavigate) {
+      onNavigate(page)
+    }
+  }
+
   const handleSignOut = async () => {
     setIsOpen(false)
     await signOut()
+    // Recharger la page pour retourner à l'accueil
+    window.location.reload()
   }
 
   if (!user) return null
@@ -94,11 +119,7 @@ export function UserDropdown() {
           <div className="py-1">
             {/* Profil */}
             <button
-              onClick={() => {
-                setIsOpen(false)
-                // TODO: Naviguer vers la page profil
-                console.log('Ouvrir profil')
-              }}
+              onClick={() => handleUserNavigation('profile')}
               className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
             >
               <User className="w-4 h-4 mr-3" />
@@ -107,11 +128,7 @@ export function UserDropdown() {
 
             {/* Commandes */}
             <button
-              onClick={() => {
-                setIsOpen(false)
-                // TODO: Naviguer vers les commandes
-                console.log('Ouvrir commandes')
-              }}
+              onClick={() => handleUserNavigation('orders')}
               className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
             >
               <ShoppingBag className="w-4 h-4 mr-3" />
@@ -120,16 +137,60 @@ export function UserDropdown() {
 
             {/* Paramètres */}
             <button
-              onClick={() => {
-                setIsOpen(false)
-                // TODO: Naviguer vers les paramètres
-                console.log('Ouvrir paramètres')
-              }}
+              onClick={() => handleUserNavigation('settings')}
               className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
             >
               <Settings className="w-4 h-4 mr-3" />
               Paramètres
             </button>
+
+            {/* Section Administration (visible seulement pour les admins) */}
+            {isAdmin && (
+              <>
+                <div className="border-t border-gray-100 my-1"></div>
+                <div className="px-4 py-2">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                    Administration
+                  </p>
+                </div>
+                
+                {/* Tableau de bord admin */}
+                <button
+                  onClick={() => handleAdminNavigation('admin-dashboard')}
+                  className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <Shield className="w-4 h-4 mr-3" />
+                  Tableau de bord
+                </button>
+
+                {/* Gestion des produits */}
+                <button
+                  onClick={() => handleAdminNavigation('admin-products')}
+                  className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <ShoppingBag className="w-4 h-4 mr-3" />
+                  Gérer les produits
+                </button>
+
+                {/* Gestion des utilisateurs */}
+                <button
+                  onClick={() => handleAdminNavigation('admin-users')}
+                  className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <User className="w-4 h-4 mr-3" />
+                  Gérer les utilisateurs
+                </button>
+
+                {/* Gestion des commandes */}
+                <button
+                  onClick={() => handleAdminNavigation('admin-orders')}
+                  className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <Settings className="w-4 h-4 mr-3" />
+                  Gérer les commandes
+                </button>
+              </>
+            )}
 
             {/* Divider */}
             <div className="border-t border-gray-100 my-1"></div>

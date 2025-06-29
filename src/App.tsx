@@ -9,8 +9,10 @@ import Footer from './components/HomagePage/Footer/Footer'
 import CulturePage from './components/CulturePage/CulturePage'
 import NutritionPage from './components/NutritionPage/NutritionPage'
 import RecettesPage from './components/RecettesPage/RecettesPage'
+import { ProfilePage, OrdersPage, SettingsPage } from './components/UserPages'
+import { AdminDashboard, ProductsManagement, UsersManagement, OrdersManagement, AdminProtection } from './components/AdminPages'
 
-type Page = 'accueil' | 'culture' | 'nutrition' | 'recettes' | 'contact'
+type Page = 'accueil' | 'culture' | 'nutrition' | 'recettes' | 'contact' | 'profile' | 'orders' | 'settings' | 'admin-dashboard' | 'admin-products' | 'admin-users' | 'admin-orders'
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('accueil')
@@ -23,6 +25,36 @@ function App() {
         return <NutritionPage />
       case 'recettes':
         return <RecettesPage />
+      case 'profile':
+        return <ProfilePage />
+      case 'orders':
+        return <OrdersPage />
+      case 'settings':
+        return <SettingsPage />
+      case 'admin-dashboard':
+        return (
+          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
+            <AdminDashboard />
+          </AdminProtection>
+        )
+      case 'admin-products':
+        return (
+          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
+            <ProductsManagement />
+          </AdminProtection>
+        )
+      case 'admin-users':
+        return (
+          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
+            <UsersManagement />
+          </AdminProtection>
+        )
+      case 'admin-orders':
+        return (
+          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
+            <OrdersManagement />
+          </AdminProtection>
+        )
       case 'contact':
         // Scroll vers le footer pour la section contact
         return (
@@ -45,7 +77,7 @@ function App() {
   const handleNavigation = (page: Page) => {
     setCurrentPage(page)
     
-    // Scroll vers le top pour les nouvelles pages
+    // Scroll vers le top pour les nouvelles pages (sauf accueil et contact)
     if (page !== 'accueil' && page !== 'contact') {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
