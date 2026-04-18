@@ -95,30 +95,27 @@ function App() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-cream-50 text-ink-900 antialiased">
         <Header onNavigate={handleNavigation} currentPage={currentPage} />
         {renderPage()}
         <Footer />
-        
-        {/* Notifications Toast */}
+
         <Toaster
-          position="top-right"
+          position="top-center"
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#363636',
+              background: 'rgba(8, 46, 30, 0.92)',
               color: '#fff',
+              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '9999px',
+              padding: '10px 18px',
+              fontSize: '0.875rem',
+              fontFamily: 'Karla, Inter, sans-serif',
             },
-            success: {
-              style: {
-                background: '#10B981',
-              },
-            },
-            error: {
-              style: {
-                background: '#EF4444',
-              },
-            },
+            success: { iconTheme: { primary: '#CA9E2E', secondary: '#082E1E' } },
+            error: { style: { background: 'rgba(201, 106, 67, 0.95)' } },
           }}
         />
       </div>

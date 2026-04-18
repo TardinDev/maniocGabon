@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Menu, X, User, LogIn } from 'lucide-react'
 import { navigationLinks } from '../../../data'
 import { useAuth } from '../../../hooks/useAuth'
 import { LoginModal } from '../../AuthPage/LoginModal'
 import { SignupModal } from '../../AuthPage/SignupModal'
 import { UserDropdown } from '../../AuthPage/UserDropdown'
 import { testSupabaseConnection, testDatabase } from '../../../utils/testSupabase'
+import { Button } from '../../ui'
+import { cn } from '../../../lib/utils'
 
 type Page = 'accueil' | 'culture' | 'nutrition' | 'recettes' | 'contact' | 'profile' | 'orders' | 'settings' | 'admin-dashboard' | 'admin-products' | 'admin-users' | 'admin-orders'
 
@@ -18,32 +21,28 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showSignupModal, setShowSignupModal] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const handleLoginClick = async () => {
-    if (user) {
-      // Si l'utilisateur est connecté, ne rien faire (le dropdown s'occupe de la déconnexion)
-      return
-    }
-
-    console.log('🔄 Test de connexion Supabase...')
-    
-    // Tester la connexion Supabase
+    if (user) return
     const connectionOk = await testSupabaseConnection()
-    
     if (connectionOk) {
-      // Si la connexion fonctionne, tester la base de données
       await testDatabase()
-      // Puis ouvrir le modal de connexion
       setShowLoginModal(true)
     }
   }
 
-  // Gestion du changement entre les modals
   const handleSwitchToSignup = () => {
     setShowLoginModal(false)
     setShowSignupModal(true)
   }
-
   const handleSwitchToLogin = () => {
     setShowSignupModal(false)
     setShowLoginModal(true)
@@ -51,161 +50,204 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
 
   return (
     <>
-      <header className="bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-600 relative text-white">
-      {/* Menu de navigation */}
-      <nav className="flex justify-between items-center p-4 lg:px-8 bg-black/10 backdrop-blur-lg border-b border-white/10 shadow-lg z-20 relative">
-        <div className="flex items-center gap-3 text-xl lg:text-2xl font-bold">
-          <img 
-            src="/logo.png" 
-            alt="Manioc Gabon Logo" 
-            className="w-10 h-10 lg:w-12 lg:h-12 object-contain rounded-lg bg-white/10 p-1"
-          />
-          <span className="hidden sm:block">Manioc Gabon</span>
-          <span className="sm:hidden">MG</span>
-        </div>
-        
-        {/* Menu hamburger pour mobile */}
-        <button 
-          className="md:hidden flex flex-col gap-1 p-2"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <div className={`w-6 h-0.5 bg-white transition-transform ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
-          <div className={`w-6 h-0.5 bg-white transition-opacity ${isMenuOpen ? 'opacity-0' : ''}`}></div>
-          <div className={`w-6 h-0.5 bg-white transition-transform ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
-        </button>
-        
-        {/* Menu desktop */}
-        <div className="hidden md:flex gap-8 items-center">
-          <ul className="flex gap-8 list-none m-0 p-0 items-center">
-            {navigationLinks.map((link) => (
-              <li key={link.id}>
-                <button 
-                  onClick={() => onNavigate(link.id as Page)}
-                  className={`text-white no-underline font-medium hover:opacity-70 transition-opacity bg-transparent border-none cursor-pointer ${
-                    currentPage === link.id ? 'opacity-100 border-b-2 border-white' : ''
-                  }`}
-                >
-                  {link.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          {/* Zone d'authentification */}
-          {user ? (
-            // Utilisateur connecté : afficher le dropdown
-            <UserDropdown onNavigate={onNavigate} />
-          ) : (
-            // Utilisateur non connecté : afficher les boutons de connexion/inscription
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleLoginClick}
-                className="bg-white text-emerald-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center gap-2 cursor-pointer"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                Connexion
-              </button>
-              <button
-                onClick={() => setShowSignupModal(true)}
-                className="border-2 border-white text-white px-4 py-2 rounded-lg font-medium hover:bg-white hover:text-emerald-700 transition-colors cursor-pointer"
-              >
-                Inscription
-              </button>
-            </div>
+      {/* Floating glass navbar — awwwards-style */}
+      <header
+        className={cn(
+          'fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500',
+          scrolled
+            ? 'top-3 w-[calc(100%-1.5rem)] sm:w-[calc(100%-3rem)] max-w-6xl'
+            : 'top-4 w-[calc(100%-1.5rem)] sm:w-[calc(100%-3rem)] max-w-7xl',
+        )}
+      >
+        <nav
+          className={cn(
+            'flex items-center justify-between gap-4 rounded-full px-3 sm:px-5 py-2.5 sm:py-3 transition-all duration-500',
+            scrolled
+              ? 'bg-white/85 backdrop-blur-xl border border-brand-100 shadow-[0_12px_40px_-12px_rgba(15,74,48,0.18)]'
+              : 'bg-white/60 backdrop-blur-md border border-white/50 shadow-[0_8px_30px_-12px_rgba(15,74,48,0.12)]',
           )}
-        </div>
+        >
+          {/* Brand */}
+          <button
+            onClick={() => onNavigate('accueil')}
+            className="flex items-center gap-2.5 pl-1 pr-2 cursor-pointer group"
+            aria-label="Manioc Gabon — accueil"
+          >
+            <span className="relative grid place-items-center w-10 h-10 rounded-full bg-gradient-to-br from-brand-700 to-brand-900 shadow-inner overflow-hidden">
+              <img
+                src="/logo.png"
+                alt=""
+                className="w-7 h-7 object-contain transition-transform duration-500 group-hover:scale-110"
+              />
+            </span>
+            <div className="hidden sm:flex flex-col items-start leading-none">
+              <span className="font-display text-[1.05rem] font-semibold tracking-tight text-ink-900">
+                Manioc Gabon
+              </span>
+              <span className="text-[0.65rem] uppercase tracking-[0.22em] text-brand-700/80">
+                Terroir · Gabon
+              </span>
+            </div>
+          </button>
 
-        {/* Menu mobile */}
-        <div className={`md:hidden absolute top-full left-0 right-0 bg-emerald-900/95 backdrop-blur-lg border-b border-white/10 transform transition-transform ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'} z-10`}>
-          <div className="p-4">
-            <ul className="flex flex-col gap-4 mb-4">
-              {navigationLinks.map((link) => (
+          {/* Desktop nav */}
+          <ul className="hidden md:flex items-center gap-1">
+            {navigationLinks.map((link) => {
+              const active = currentPage === link.id
+              return (
                 <li key={link.id}>
-                  <button 
-                    onClick={() => {
-                      onNavigate(link.id as Page)
-                      setIsMenuOpen(false)
-                    }}
-                    className={`text-white no-underline font-medium hover:opacity-70 transition-opacity block py-2 bg-transparent border-none cursor-pointer text-left w-full ${
-                      currentPage === link.id ? 'opacity-100 border-l-4 border-white pl-4' : ''
-                    }`}
+                  <button
+                    onClick={() => onNavigate(link.id as Page)}
+                    className={cn(
+                      'relative px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 cursor-pointer',
+                      active
+                        ? 'text-brand-900'
+                        : 'text-ink-700 hover:text-brand-800',
+                    )}
                   >
-                    {link.label}
+                    {active && (
+                      <span className="absolute inset-0 rounded-full bg-brand-50 border border-brand-100" />
+                    )}
+                    <span className="relative">{link.label}</span>
                   </button>
                 </li>
-              ))}
+              )
+            })}
+          </ul>
+
+          {/* Auth zone */}
+          <div className="flex items-center gap-2">
+            {user ? (
+              <UserDropdown onNavigate={onNavigate} />
+            ) : (
+              <>
+                <Button
+                  onClick={handleLoginClick}
+                  variant="ghost"
+                  size="sm"
+                  className="hidden sm:inline-flex text-ink-700 hover:text-brand-800"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Connexion
+                </Button>
+                <Button
+                  onClick={() => setShowSignupModal(true)}
+                  variant="primary"
+                  size="sm"
+                  className="hidden sm:inline-flex"
+                >
+                  Commander
+                </Button>
+              </>
+            )}
+
+            {/* Mobile menu trigger */}
+            <button
+              className="md:hidden grid place-items-center w-10 h-10 rounded-full bg-brand-50 text-brand-800 hover:bg-brand-100 transition-colors cursor-pointer"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Menu"
+              aria-expanded={isMenuOpen}
+            >
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </nav>
+
+        {/* Mobile drawer */}
+        <div
+          className={cn(
+            'md:hidden absolute left-0 right-0 top-[calc(100%+0.5rem)] origin-top transition-all duration-300',
+            isMenuOpen ? 'opacity-100 scale-y-100 pointer-events-auto' : 'opacity-0 scale-y-95 pointer-events-none',
+          )}
+        >
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl border border-brand-100 shadow-[0_20px_60px_-20px_rgba(15,74,48,0.25)] p-5">
+            <ul className="flex flex-col gap-1 mb-4">
+              {navigationLinks.map((link) => {
+                const active = currentPage === link.id
+                return (
+                  <li key={link.id}>
+                    <button
+                      onClick={() => {
+                        onNavigate(link.id as Page)
+                        setIsMenuOpen(false)
+                      }}
+                      className={cn(
+                        'w-full text-left px-4 py-3 rounded-2xl font-medium transition-colors cursor-pointer',
+                        active
+                          ? 'bg-brand-50 text-brand-900 border border-brand-100'
+                          : 'text-ink-700 hover:bg-brand-50/60 hover:text-brand-800',
+                      )}
+                    >
+                      {link.label}
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
 
-            {/* Zone d'authentification mobile */}
-            <div className="border-t border-white/20 pt-4">
+            <div className="border-t border-brand-100 pt-4">
               {user ? (
-                // Utilisateur connecté sur mobile
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-3 px-2 py-2 bg-white/10 rounded-lg">
-                    <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-yellow-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                      {user?.user_metadata?.full_name 
+                  <div className="flex items-center gap-3 p-3 bg-brand-50 rounded-2xl">
+                    <div className="w-10 h-10 bg-gradient-to-br from-brand-600 to-brand-800 rounded-full grid place-items-center text-white font-semibold text-sm">
+                      {user?.user_metadata?.full_name
                         ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-                        : user?.email?.charAt(0).toUpperCase() || 'U'
-                      }
+                        : user?.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white truncate">
+                      <p className="text-sm font-semibold text-ink-900 truncate">
                         {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Utilisateur'}
                       </p>
-                      <p className="text-xs text-white/70 truncate">
-                        {user.email}
-                      </p>
+                      <p className="text-xs text-ink-500 truncate">{user.email}</p>
                     </div>
                   </div>
                   <UserDropdown onNavigate={onNavigate} />
                 </div>
               ) : (
-                // Utilisateur non connecté sur mobile
-                <div className="space-y-3">
-                  <button
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
                     onClick={() => {
                       handleLoginClick()
                       setIsMenuOpen(false)
                     }}
-                    className="w-full bg-white text-emerald-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+                    variant="outline"
+                    size="md"
+                    className="w-full"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                    <User className="w-4 h-4" />
                     Connexion
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => {
                       setShowSignupModal(true)
                       setIsMenuOpen(false)
                     }}
-                    className="w-full border-2 border-white text-white px-4 py-3 rounded-lg font-medium hover:bg-white hover:text-emerald-700 transition-colors"
+                    variant="primary"
+                    size="md"
+                    className="w-full"
                   >
-                    Inscription
-                  </button>
+                    Commander
+                  </Button>
                 </div>
               )}
             </div>
           </div>
         </div>
-      </nav>
-    </header>
+      </header>
 
-    {/* Modals d'authentification */}
-    <LoginModal
-      isOpen={showLoginModal}
-      onClose={() => setShowLoginModal(false)}
-      onSwitchToSignup={handleSwitchToSignup}
-    />
-    
-    <SignupModal
-      isOpen={showSignupModal}
-      onClose={() => setShowSignupModal(false)}
-      onSwitchToLogin={handleSwitchToLogin}
-    />
-  </>
+      {/* Spacer so content isn't hidden under fixed navbar */}
+      <div aria-hidden className="h-20" />
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSwitchToSignup={handleSwitchToSignup}
+      />
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        onSwitchToLogin={handleSwitchToLogin}
+      />
+    </>
   )
 }

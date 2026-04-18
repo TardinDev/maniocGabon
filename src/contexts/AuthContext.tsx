@@ -82,17 +82,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     try {
       setLoading(true)
+      
+      // Nettoyer toutes les clés Supabase du localStorage
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i)
+        if (key && key.includes('sb-') && key.includes('-auth-token')) {
+          localStorage.removeItem(key)
+        }
+      }
+      
+      // Déconnexion Supabase
       const { error } = await supabase.auth.signOut()
       
       if (error) {
+        console.error('Erreur Supabase signOut:', error)
         toast.error('Erreur lors de la déconnexion')
       } else {
         toast.success('Déconnexion réussie')
-        setUser(null)
-        setSession(null)
       }
+      
+      // Forcer la réinitialisation des états
+      setUser(null)
+      setSession(null)
+      setUserRole('user')
+      
     } catch (authError) {
       console.error('Erreur de déconnexion:', authError)
+      toast.error('Erreur lors de la déconnexion')
+      
+      // Même en cas d'erreur, nettoyer les états locaux
+      setUser(null)
+      setSession(null)
+      setUserRole('user')
     } finally {
       setLoading(false)
     }

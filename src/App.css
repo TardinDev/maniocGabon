@@ -1,6 +1,131 @@
 @import "tailwindcss";
 
-/* Styles personnalisés pour la responsivité */
+/* ───────────────────────────────────────────────────────────
+   MANIOC GABON — DESIGN SYSTEM (Tailwind v4 @theme)
+   Pattern: Liquid Glass / Premium Culinary
+   Inspiration: awwwards.com
+   ─────────────────────────────────────────────────────────── */
+@theme {
+  /* Brand palette — rich emerald + warm gold + cream */
+  --color-brand-50:  #F3FBF6;
+  --color-brand-100: #DEF5E7;
+  --color-brand-200: #B6E8C8;
+  --color-brand-300: #84D4A5;
+  --color-brand-400: #4FB97F;
+  --color-brand-500: #2F9A63;
+  --color-brand-600: #1F7A4C;
+  --color-brand-700: #15603C;
+  --color-brand-800: #0E4A30;
+  --color-brand-900: #082E1E;
+  --color-brand-950: #041A10;
+
+  /* Warm gold — CTA accent (awwwards-style metallic) */
+  --color-gold-300: #F2D77A;
+  --color-gold-400: #E3BE52;
+  --color-gold-500: #CA9E2E;
+  --color-gold-600: #A37A1F;
+
+  /* Terracotta — secondary accent */
+  --color-clay-400: #E28968;
+  --color-clay-500: #C96A43;
+
+  /* Cream / ivory backgrounds */
+  --color-cream-50:  #FBF7EF;
+  --color-cream-100: #F4EDDE;
+  --color-cream-200: #EADFC6;
+
+  /* Ink — text */
+  --color-ink-900: #0B1B14;
+  --color-ink-700: #2C3B33;
+  --color-ink-500: #5A6A62;
+
+  /* Fonts */
+  --font-display: "Playfair Display", ui-serif, Georgia, serif;
+  --font-body: "Karla", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Animations */
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-blob: blob 18s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-scroll-cue: scroll-cue 2s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes blob {
+  0%,100% { transform: translate3d(0,0,0) scale(1); }
+  33%     { transform: translate3d(3%, -4%, 0) scale(1.08); }
+  66%     { transform: translate3d(-4%, 3%, 0) scale(0.94); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-12px); }
+}
+@keyframes scroll-cue {
+  0%   { transform: translateY(0); opacity: 0.2; }
+  50%  { transform: translateY(6px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.2; }
+}
+
+/* ───────────────────────────────────────────────────────────
+   Base
+   ─────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink-900);
+  background: var(--color-cream-50);
+}
+h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.015em; }
+
+/* Selection */
+::selection { background: var(--color-brand-600); color: white; }
+
+/* Focus ring — accessible, refined */
+*:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Hide default focus on mouse clicks, show on keyboard */
+input:focus, textarea:focus, select:focus, button:focus { outline: none; }
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+}
+
+/* ───────────────────────────────────────────────────────────
+   Utilities
+   ─────────────────────────────────────────────────────────── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -8,122 +133,78 @@
   overflow: hidden;
 }
 
-/* Animation pour le menu mobile */
-@media (max-width: 768px) {
-  .mobile-menu-transition {
-    transition: transform 0.3s ease-in-out;
+/* Glassmorphism card */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+.glass-dark {
+  background: rgba(8, 46, 30, 0.55);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Gold shimmer text (awwwards accent) */
+.text-shimmer-gold {
+  background: linear-gradient(
+    110deg,
+    var(--color-gold-500) 20%,
+    var(--color-gold-300) 40%,
+    var(--color-gold-500) 60%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 3.5s linear infinite;
+}
+
+/* Noise overlay (subtle grain) */
+.noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Reveal on enter */
+.reveal { opacity: 0; transform: translateY(24px); }
+.reveal.in-view { animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* Hauteurs personnalisées pour Tailwind */
-.h-15 {
-  height: 3.75rem;
-}
+/* Legacy custom sizing (kept for existing components) */
+.h-15 { height: 3.75rem; }
+.w-15 { width: 3.75rem; }
+.h-25 { height: 6.25rem; }
+.w-25 { width: 6.25rem; }
+.h-30 { height: 7.5rem; }
+.w-30 { width: 7.5rem; }
+.w-38 { width: 9.5rem; }
+.z-5  { z-index: 5; }
+.z-8  { z-index: 8; }
+.z-15 { z-index: 15; }
 
-.w-15 {
-  width: 3.75rem;
-}
-
-.h-25 {
-  height: 6.25rem;
-}
-
-.w-25 {
-  width: 6.25rem;
-}
-
-.w-30 {
-  width: 7.5rem;
-}
-
-.h-30 {
-  height: 7.5rem;
-}
-
-.w-38 {
-  width: 9.5rem;
-}
-
-.h-15 {
-  height: 3.75rem;
-}
-
-/* Styles pour le z-index */
-.z-5 {
-  z-index: 5;
-}
-
-.z-8 {
-  z-index: 8;
-}
-
-.z-15 {
-  z-index: 15;
-}
-
-/* Scroll smooth pour toute la page */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Amélioration des focus pour l'accessibilité */
-input:focus, 
-textarea:focus, 
-select:focus,
-button:focus {
-  outline: 2px solid #059669;
-  outline-offset: 2px;
-}
-
-/* Animation pour les cartes de produits */
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* Responsive breakpoints personnalisés */
-@media (max-width: 640px) {
-  .text-responsive-sm {
-    font-size: 0.875rem;
-  }
-}
-
+/* Footer responsive overrides (legacy) */
 @media (min-width: 768px) {
-  .text-responsive-md {
-    font-size: 1rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .text-responsive-lg {
-    font-size: 1.125rem;
-  }
-}
-
-/* Media queries pour le Footer responsive */
-@media (min-width: 768px) {
-  .footer-bottom {
-    flex-direction: row !important;
-    text-align: left !important;
-  }
-  
-  .footer-newsletter {
-    flex-direction: row !important;
-  }
-  
-  .footer-contact {
-    text-align: left !important;
-  }
-  
-  .footer-certifications {
-    justify-content: flex-start !important;
-  }
-  
-  .footer-section h3 {
-    text-align: left !important;
-  }
-  
-  .footer-links {
-    align-items: flex-start !important;
-  }
+  .footer-bottom { flex-direction: row !important; text-align: left !important; }
+  .footer-newsletter { flex-direction: row !important; }
+  .footer-contact { text-align: left !important; }
+  .footer-certifications { justify-content: flex-start !important; }
+  .footer-section h3 { text-align: left !important; }
+  .footer-links { align-items: flex-start !important; }
 }

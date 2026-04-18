@@ -262,7 +262,15 @@ export function UserSettings() {
             </button>
 
             <button
-              onClick={signOut}
+              onClick={async () => {
+                try {
+                  await signOut()
+                  // Laisser le système gérer la redirection automatiquement
+                } catch (error) {
+                  console.error('Erreur lors de la déconnexion:', error)
+                  toast.error('Erreur lors de la déconnexion')
+                }
+              }}
               className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium flex items-center justify-center gap-2"
             >
               <LogOut className="w-4 h-4" />

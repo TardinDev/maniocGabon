@@ -61,10 +61,25 @@ export function UserDropdown({ onNavigate }: UserDropdownProps = {}) {
   }
 
   const handleSignOut = async () => {
-    setIsOpen(false)
-    await signOut()
-    // Recharger la page pour retourner à l'accueil
-    window.location.reload()
+    try {
+      setIsOpen(false)
+      
+      // Attendre que la déconnexion soit complète
+      await signOut()
+      
+      // Laisser le système de gestion d'état React s'occuper de la navigation
+      // vers l'accueil automatiquement
+      
+      // Optionnel : redirection vers l'accueil après un délai
+      setTimeout(() => {
+        if (window.location.pathname !== '/') {
+          window.location.href = '/'
+        }
+      }, 100)
+      
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error)
+    }
   }
 
   if (!user) return null
