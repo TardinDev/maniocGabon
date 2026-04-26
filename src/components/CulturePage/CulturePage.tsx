@@ -1,5 +1,4 @@
-import { motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
-import { useEffect, useRef } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import {
   Leaf,
   Sprout,
@@ -14,6 +13,7 @@ import {
   CheckCircle2,
   Dot,
 } from 'lucide-react'
+import { AnimatedNumber } from '../ui/AnimatedNumber'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -23,26 +23,6 @@ const fadeUp = {
 const stagger = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
-}
-
-function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-40px' })
-  const reduce = useReducedMotion()
-  const mv = useMotionValue(reduce ? value : 0)
-  const spring = useSpring(mv, { stiffness: 80, damping: 20 })
-  const rounded = useTransform(spring, (v) => Math.round(v).toLocaleString())
-
-  useEffect(() => {
-    if (inView) mv.set(value)
-  }, [inView, value, mv])
-
-  return (
-    <span ref={ref} className="inline-flex items-baseline tabular-nums">
-      <motion.span>{rounded}</motion.span>
-      {suffix && <span className="ml-0.5">{suffix}</span>}
-    </span>
-  )
 }
 
 export default function CulturePage() {
