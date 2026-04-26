@@ -10,12 +10,29 @@ import CulturePage from './components/CulturePage/CulturePage'
 import NutritionPage from './components/NutritionPage/NutritionPage'
 import RecettesPage from './components/RecettesPage/RecettesPage'
 import { ProfilePage, OrdersPage, SettingsPage } from './components/UserPages'
-import { AdminDashboard, ProductsManagement, UsersManagement, OrdersManagement, AdminProtection } from './components/AdminPages'
+import { AdminDashboard, ProductsManagement, UsersManagement, OrdersManagement, AdminProtection, AdminLayout } from './components/AdminPages'
 
 type Page = 'accueil' | 'culture' | 'nutrition' | 'recettes' | 'contact' | 'profile' | 'orders' | 'settings' | 'admin-dashboard' | 'admin-products' | 'admin-users' | 'admin-orders'
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('accueil')
+
+  const handleNavigation = (page: Page) => {
+    setCurrentPage(page)
+
+    if (page !== 'accueil' && page !== 'contact') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    if (page === 'contact') {
+      setTimeout(() => {
+        const contactSection = document.getElementById('contact')
+        if (contactSection) {
+          contactSection.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+    }
+  }
 
   const renderPage = () => {
     switch (currentPage) {
@@ -32,31 +49,23 @@ function App() {
       case 'settings':
         return <SettingsPage />
       case 'admin-dashboard':
-        return (
-          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
-            <AdminDashboard />
-          </AdminProtection>
-        )
       case 'admin-products':
-        return (
-          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
-            <ProductsManagement />
-          </AdminProtection>
-        )
-      case 'admin-users':
-        return (
-          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
-            <UsersManagement />
-          </AdminProtection>
-        )
       case 'admin-orders':
+      case 'admin-users': {
+        const inner =
+          currentPage === 'admin-dashboard' ? <AdminDashboard onNavigate={(p) => handleNavigation(p as Page)} /> :
+          currentPage === 'admin-products'  ? <ProductsManagement /> :
+          currentPage === 'admin-orders'    ? <OrdersManagement /> :
+                                              <UsersManagement />
         return (
           <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
-            <OrdersManagement />
+            <AdminLayout currentPage={currentPage} onNavigate={(p) => handleNavigation(p as Page)}>
+              {inner}
+            </AdminLayout>
           </AdminProtection>
         )
+      }
       case 'contact':
-        // Scroll vers le footer pour la section contact
         return (
           <>
             <HeroSection />
@@ -71,25 +80,6 @@ function App() {
             <ProductsSection />
           </>
         )
-    }
-  }
-
-  const handleNavigation = (page: Page) => {
-    setCurrentPage(page)
-    
-    // Scroll vers le top pour les nouvelles pages (sauf accueil et contact)
-    if (page !== 'accueil' && page !== 'contact') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-    
-    // Pour contact, scroll vers le footer
-    if (page === 'contact') {
-      setTimeout(() => {
-        const contactSection = document.getElementById('contact')
-        if (contactSection) {
-          contactSection.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 100)
     }
   }
 
