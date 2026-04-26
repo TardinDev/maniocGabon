@@ -29,8 +29,19 @@ export default function CulturePage() {
   const reduce = useReducedMotion()
 
   return (
-    <section className="py-16 px-4 sm:px-8 bg-gradient-to-b from-emerald-50 to-white min-h-[80vh] overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <section className="relative py-16 px-4 sm:px-8 bg-gradient-to-b from-emerald-50 to-white min-h-[80vh] overflow-hidden">
+      {/* Decorative blob */}
+      {!reduce && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full blur-[120px] opacity-40"
+          style={{ background: 'radial-gradient(circle, rgba(132,212,165,0.7), transparent 70%)' }}
+          animate={{ x: [0, 24, -16, 0], y: [0, -18, 24, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
+
+      <div className="relative max-w-6xl mx-auto">
         {/* Titre principal */}
         <motion.header
           className="text-center mb-16"
@@ -38,6 +49,14 @@ export default function CulturePage() {
           animate="visible"
           variants={stagger}
         >
+          <motion.span
+            variants={fadeUp}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-600/10 ring-1 ring-emerald-600/20 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800 mb-6"
+          >
+            <Sprout className="w-3.5 h-3.5" aria-hidden="true" />
+            Patrimoine Gabonais
+          </motion.span>
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -64,6 +83,9 @@ export default function CulturePage() {
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
+              <span className="block text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80 mb-3">
+                Chapitre 01 — Racines
+              </span>
               <h2 className="flex items-center gap-3 text-3xl sm:text-4xl font-bold text-emerald-900 mb-6">
                 <Leaf className="w-8 h-8 text-emerald-600" aria-hidden="true" />
                 Histoire et Origines
@@ -135,6 +157,17 @@ export default function CulturePage() {
 
         {/* Section Techniques de culture */}
         <div className="mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.4 }}
+            className="text-center mb-3"
+          >
+            <span className="text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80">
+              Chapitre 02 — Savoir-faire
+            </span>
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -201,6 +234,17 @@ export default function CulturePage() {
 
         {/* Section Variétés */}
         <div className="mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.4 }}
+            className="text-center mb-3"
+          >
+            <span className="text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80">
+              Chapitre 03 — Diversité
+            </span>
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -321,6 +365,9 @@ export default function CulturePage() {
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
+              <span className="block text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80 mb-3">
+                Chapitre 04 — Héritage
+              </span>
               <h2 className="flex items-center gap-3 text-3xl sm:text-4xl font-bold text-emerald-900 mb-6">
                 <Drama className="w-8 h-8 text-emerald-600" aria-hidden="true" />
                 Importance Culturelle
@@ -363,6 +410,9 @@ export default function CulturePage() {
             />
           )}
           <div className="text-center mb-12 relative">
+            <span className="block text-xs font-semibold tracking-[0.22em] uppercase text-emerald-200/80 mb-3">
+              Chapitre 05 — Avenir
+            </span>
             <div className="inline-flex mb-4 w-14 h-14 rounded-2xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
               <Rocket className="w-7 h-7 text-white" aria-hidden="true" />
             </div>
