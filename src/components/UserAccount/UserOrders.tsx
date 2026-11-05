@@ -48,14 +48,14 @@ export function UserOrders() {
               name: 'Farine de Manioc Bio',
               quantity: 2,
               price: 8000,
-              image: '/imagesproducts/farine.png'
+              image: '/imagesproducts/farine.jpg'
             },
             {
               id: '2', 
               name: 'Chips de Manioc',
               quantity: 3,
               price: 3000,
-              image: '/imagesproducts/chips.png'
+              image: '/imagesproducts/chips.jpg'
             }
           ],
           shippingAddress: 'Libreville, Gabon',
@@ -73,7 +73,7 @@ export function UserOrders() {
               name: 'Tapioca Premium',
               quantity: 1,
               price: 15000,
-              image: '/imagesproducts/tapioca.png'
+              image: '/imagesproducts/tapioca.jpg'
             }
           ],
           shippingAddress: 'Port-Gentil, Gabon',

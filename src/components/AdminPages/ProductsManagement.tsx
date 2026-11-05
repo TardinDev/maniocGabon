@@ -20,7 +20,7 @@ export function ProductsManagement() {
       name: 'Farine de Manioc Bio',
       description: 'Farine de manioc de qualité supérieure, sans gluten et riche en nutriments.',
       price: 8000,
-      image: '/imagesproducts/farine.png',
+      image: '/imagesproducts/farine.jpg',
       category: 'Farine',
       inStock: true
     },
@@ -29,7 +29,7 @@ export function ProductsManagement() {
       name: 'Chips de Manioc',
       description: 'Chips croustillantes et savoureuses, parfaites pour l\'apéritif.',
       price: 3000,
-      image: '/imagesproducts/chips.png',
+      image: '/imagesproducts/chips.jpg',
       category: 'Snacks',
       inStock: true
     },
@@ -38,7 +38,7 @@ export function ProductsManagement() {
       name: 'Tubercules Frais',
       description: 'Tubercules de manioc frais, directement des plantations gabonaises.',
       price: 2500,
-      image: '/imagesproducts/tubercules.png',
+      image: '/imagesproducts/tubercules.jpg',
       category: 'Tubercules',
       inStock: false
     }

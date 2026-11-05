@@ -2,21 +2,55 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Manioc Gabon — Producteur gabonais de manioc frais, bio et transformé. Livraison à Libreville et dans tout le Gabon." />
-    <meta name="theme-color" content="#064E3B" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Manioc Gabon — Le manioc du terroir, livré en 48 h</title>
+    <meta name="description" content="Manioc frais, bâtons, feuilles, tapioca et farines du terroir gabonais. Récoltés chez nos producteurs et livrés à Libreville en 48 h. Paiement Mobile Money." />
+    <meta name="theme-color" content="#FBFBFD" />
+    <link rel="canonical" href="https://maniocgabon.ga/" />
 
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="Manioc Gabon" />
+    <meta property="og:title" content="Manioc Gabon — Le manioc du terroir, livré en 48 h" />
+    <meta property="og:description" content="Tubercules, bâtons, feuilles et farines récoltés chez nos producteurs gabonais et livrés chez vous." />
+    <meta property="og:url" content="https://maniocgabon.ga/" />
+    <meta property="og:image" content="https://maniocgabon.ga/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Feuilles de manioc, tubercules frais et bâtons de manioc" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Manioc Gabon — Le manioc du terroir, livré en 48 h" />
+    <meta name="twitter:description" content="Tubercules, bâtons, feuilles et farines récoltés chez nos producteurs gabonais et livrés chez vous." />
+    <meta name="twitter:image" content="https://maniocgabon.ga/og-image.jpg" />
+
+    <!-- Inter as a fallback for non-Apple devices (SF Pro is used natively on Apple) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="/banniere.jpg" fetchpriority="high" />
 
-    <title>Manioc Gabon — Saveurs authentiques du terroir gabonais</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Manioc Gabon",
+        "image": "https://maniocgabon.ga/og-image.jpg",
+        "url": "https://maniocgabon.ga/",
+        "telephone": "+241 01 23 45 67",
+        "email": "contact@maniocgabon.ga",
+        "address": { "@type": "PostalAddress", "streetAddress": "Montagne Sainte", "addressLocality": "Libreville", "addressCountry": "GA" },
+        "openingHours": ["Mo-Fr 08:00-18:00", "Sa 08:00-14:00"],
+        "priceRange": "500-4000 FCFA"
+      }
+    </script>
   </head>
   <body>
+    <noscript>Manioc Gabon a besoin de JavaScript pour afficher la boutique.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
