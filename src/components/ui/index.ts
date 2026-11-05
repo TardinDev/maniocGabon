@@ -1,3 +1,7 @@
 export { Button, buttonVariants } from './Button'
 export { Card, CardMedia, CardBody } from './Card'
 export { Badge } from './Badge'
+export { Confetti } from './Confetti'
+export { FavoriteButton } from './FavoriteButton'
+export { Mascot } from './Mascot'
+export { Field } from './Field'
