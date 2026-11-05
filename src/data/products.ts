@@ -59,7 +59,7 @@ export const products: Product[] = [
     tag: 'Best-seller', 
     price: '1500 FCFA/kg', 
     priceValue: 1500, 
-    image: '/imagesproducts/maniocdivers.jpg', 
+    image: '/imagesproducts/batons.jpg', 
     category: 'batons' 
   },
   { 
@@ -68,7 +68,7 @@ export const products: Product[] = [
     description: 'Bâtons de qualité supérieure, séchage contrôlé', 
     price: '2000 FCFA/kg', 
     priceValue: 2000, 
-    image: '/imagesproducts/batons.jpg', 
+    image: '/imagesproducts/maniocdivers.jpg', 
     category: 'batons' 
   },
   { 
