@@ -1,38 +1,82 @@
-import { useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { MotionConfig } from 'motion/react'
 import './App.css'
 import { AuthProvider } from './contexts/AuthContext.tsx'
+import { ShopProvider } from './contexts/ShopProvider'
 import Header from './components/HomagePage/Header/Header'
 import HeroSection from './components/HomagePage/HeroSection/HeroSection'
+import Highlights from './components/HomagePage/Highlights/Highlights'
 import ProductsSection from './components/HomagePage/ProductsSection/ProductsSection'
+import HowItWorks from './components/HomagePage/HowItWorks/HowItWorks'
+import FunFacts from './components/HomagePage/FunFacts/FunFacts'
+import Faq from './components/HomagePage/Faq/Faq'
+import ContactSection from './components/HomagePage/Contact/ContactSection'
 import Footer from './components/HomagePage/Footer/Footer'
-import CulturePage from './components/CulturePage/CulturePage'
-import NutritionPage from './components/NutritionPage/NutritionPage'
-import RecettesPage from './components/RecettesPage/RecettesPage'
-import { ProfilePage, OrdersPage, SettingsPage } from './components/UserPages'
-import { AdminDashboard, ProductsManagement, UsersManagement, OrdersManagement, AdminProtection, AdminLayout } from './components/AdminPages'
+import { CartDrawer, CheckoutModal } from './components/Shop'
+import { CookieBanner, LegalPage } from './components/Legal'
+import { NotFound } from './components/NotFound/NotFound'
+import { PAGE_TITLES, resolveLocation, type Page } from './lib/routes'
 
-type Page = 'accueil' | 'culture' | 'nutrition' | 'recettes' | 'contact' | 'profile' | 'orders' | 'settings' | 'admin-dashboard' | 'admin-products' | 'admin-users' | 'admin-orders'
+// Secondary pages are code-split so the home page loads fast.
+const CulturePage = lazy(() => import('./components/CulturePage/CulturePage'))
+const NutritionPage = lazy(() => import('./components/NutritionPage/NutritionPage'))
+const RecettesPage = lazy(() => import('./components/RecettesPage/RecettesPage'))
+const ProfilePage = lazy(() => import('./components/UserPages').then((m) => ({ default: m.ProfilePage })))
+const OrdersPage = lazy(() => import('./components/UserPages').then((m) => ({ default: m.OrdersPage })))
+const SettingsPage = lazy(() => import('./components/UserPages').then((m) => ({ default: m.SettingsPage })))
+const AdminArea = lazy(() => import('./components/AdminPages/AdminArea'))
+
+function PageFallback() {
+  return (
+    <div className="grid min-h-[60vh] place-items-center" role="status" aria-label="Chargement">
+      <span className="h-8 w-8 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
+    </div>
+  )
+}
+
+function scrollToSection(id: string) {
+  // Wait one frame so the home page is mounted before scrolling.
+  requestAnimationFrame(() => {
+    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 60)
+  })
+}
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('accueil')
+  const [currentPage, setCurrentPage] = useState<Page>(() => resolveLocation(window.location.pathname, window.location.hash).page)
 
-  const handleNavigation = (page: Page) => {
+  // Sync with the URL hash (back/forward buttons, in-page anchors, deep links)
+  useEffect(() => {
+    const apply = () => {
+      const { page, section } = resolveLocation(window.location.pathname, window.location.hash)
+      setCurrentPage(page)
+      if (section) scrollToSection(section)
+      else window.scrollTo({ top: 0 })
+    }
+    const initial = resolveLocation(window.location.pathname, window.location.hash)
+    if (initial.section) scrollToSection(initial.section)
+    window.addEventListener('hashchange', apply)
+    return () => window.removeEventListener('hashchange', apply)
+  }, [])
+
+  useEffect(() => {
+    document.title = PAGE_TITLES[currentPage]
+  }, [currentPage])
+
+  const handleNavigation = useCallback((page: Page, section?: string) => {
+    const target = section ?? (page === 'contact' ? 'contact' : undefined)
+    const hash = target ? `#${target}` : page === 'accueil' ? '' : `#${page}`
+    if (window.location.pathname !== '/') {
+      window.location.href = `/${hash}`
+      return
+    }
+    if (window.location.hash !== hash) {
+      history.pushState(null, '', hash || '/')
+    }
     setCurrentPage(page)
-
-    if (page !== 'accueil' && page !== 'contact') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
-    if (page === 'contact') {
-      setTimeout(() => {
-        const contactSection = document.getElementById('contact')
-        if (contactSection) {
-          contactSection.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 100)
-    }
-  }
+    if (target) scrollToSection(target)
+    else window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
   const renderPage = () => {
     switch (currentPage) {
@@ -48,68 +92,75 @@ function App() {
         return <OrdersPage />
       case 'settings':
         return <SettingsPage />
+      case 'confidentialite':
+      case 'cgu':
+      case 'mentions':
+        return <LegalPage kind={currentPage} />
+      case 'not-found':
+        return <NotFound onHome={() => handleNavigation('accueil')} />
       case 'admin-dashboard':
       case 'admin-products':
       case 'admin-orders':
-      case 'admin-users': {
-        const inner =
-          currentPage === 'admin-dashboard' ? <AdminDashboard onNavigate={(p) => handleNavigation(p as Page)} /> :
-          currentPage === 'admin-products'  ? <ProductsManagement /> :
-          currentPage === 'admin-orders'    ? <OrdersManagement /> :
-                                              <UsersManagement />
-        return (
-          <AdminProtection onNavigateHome={() => setCurrentPage('accueil')}>
-            <AdminLayout currentPage={currentPage} onNavigate={(p) => handleNavigation(p as Page)}>
-              {inner}
-            </AdminLayout>
-          </AdminProtection>
-        )
-      }
+      case 'admin-users':
+        return <AdminArea currentPage={currentPage} onNavigate={handleNavigation} />
       case 'contact':
-        return (
-          <>
-            <HeroSection />
-            <ProductsSection />
-          </>
-        )
       case 'accueil':
       default:
         return (
-          <>
-            <HeroSection />
+          <main>
+            <HeroSection onDiscover={() => handleNavigation('culture')} />
+            <Highlights />
             <ProductsSection />
-          </>
+            <HowItWorks />
+            <FunFacts />
+            <Faq />
+            <ContactSection />
+          </main>
         )
     }
   }
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-cream-50 text-ink-900 antialiased">
-        <Header onNavigate={handleNavigation} currentPage={currentPage} />
-        {renderPage()}
-        <Footer />
+    <MotionConfig reducedMotion="user">
+      <AuthProvider>
+        <ShopProvider>
+          <div className="min-h-screen bg-paper text-ink-900 antialiased">
+            <a
+              href="#produits"
+              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-14 focus:z-[90] focus:rounded-full focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-white"
+            >
+              Aller à la boutique
+            </a>
+            <Header onNavigate={handleNavigation} currentPage={currentPage} />
+            <Suspense fallback={<PageFallback />}>{renderPage()}</Suspense>
+            <Footer onNavigate={handleNavigation} />
+            <CartDrawer />
+            <CheckoutModal />
+            <CookieBanner onNavigatePrivacy={() => handleNavigation('confidentialite')} />
 
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: 'rgba(8, 46, 30, 0.92)',
-              color: '#fff',
-              backdropFilter: 'blur(14px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '9999px',
-              padding: '10px 18px',
-              fontSize: '0.875rem',
-              fontFamily: 'Karla, Inter, sans-serif',
-            },
-            success: { iconTheme: { primary: '#CA9E2E', secondary: '#082E1E' } },
-            error: { style: { background: 'rgba(201, 106, 67, 0.95)' } },
-          }}
-        />
-      </div>
-    </AuthProvider>
+            <Toaster
+              position="top-center"
+              containerStyle={{ top: 60 }}
+              toastOptions={{
+                duration: 2600,
+                style: {
+                  background: 'rgba(29, 29, 31, 0.88)',
+                  color: '#fff',
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  borderRadius: '9999px',
+                  padding: '8px 16px',
+                  fontSize: '0.875rem',
+                  fontFamily: 'var(--font-body)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.18)',
+                },
+                success: { iconTheme: { primary: '#4FB97F', secondary: '#fff' } },
+                error: { style: { background: 'rgba(201, 106, 67, 0.95)' } },
+              }}
+            />
+          </div>
+        </ShopProvider>
+      </AuthProvider>
+    </MotionConfig>
   )
 }
 
