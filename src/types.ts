@@ -7,6 +7,7 @@ export interface Product {
   priceValue: number
   image: string
   category: string
+  tag?: 'Nouveau' | 'Best-seller' | 'Bio'
 }
 
 // Types pour les catégories

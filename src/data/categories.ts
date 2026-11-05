@@ -1,8 +1,9 @@
 import type { Category } from '../types'
 
 export const categories: Category[] = [
-  { id: 'batons', name: 'Bâtons de manioc', icon: '/imagesicons/battons.png' },
+  { id: 'batons', name: 'Bâtons', icon: '/imagesicons/battons.png' },
+  { id: 'tubercules', name: 'Tubercules', icon: '/imagesicons/tubercules.png' },
   { id: 'feuilles', name: 'Feuilles', icon: '🌿' },
-  { id: 'tubercules', name: 'Tubercules frais', icon: '/imagesicons/tubercules.png' },
-  { id: 'transformes', name: 'Produits transformés', icon: '🥯' }
-] 
+  { id: 'transformes', name: 'Transformés', icon: '🥯' },
+  { id: 'bio', name: 'Bio', icon: '🌱' },
+]
