@@ -1,182 +1,184 @@
-import { MapPin, Phone, Mail, Clock, ArrowRight, Leaf } from 'lucide-react'
-import { footerLinks, socialNetworks } from '../../../data'
-import { Button } from '../../ui'
+import { useRef, useState, type FormEvent } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import toast from 'react-hot-toast'
+import { ArrowRight, Check } from 'lucide-react'
+import { isEmail, looksLikeSpam } from '../../../lib/validation'
+import type { Page } from '../../../lib/routes'
 
-export default function Footer() {
+type Link = { label: string; page?: Page; hash?: string; href?: string }
+
+const columns: { title: string; links: Link[] }[] = [
+  {
+    title: 'Boutique',
+    links: [
+      { label: 'Tous les produits', hash: 'produits' },
+      { label: 'Comment ça marche', hash: 'fonctionnement' },
+      { label: 'Questions fréquentes', hash: 'faq' },
+    ],
+  },
+  {
+    title: 'Découvrir',
+    links: [
+      { label: 'Culture du manioc', page: 'culture' },
+      { label: 'Valeurs nutritionnelles', page: 'nutrition' },
+      { label: 'Recettes traditionnelles', page: 'recettes' },
+    ],
+  },
+  {
+    title: 'Contact',
+    links: [
+      { label: '+241 01 23 45 67', href: 'tel:+24101234567' },
+      { label: 'contact@maniocgabon.ga', href: 'mailto:contact@maniocgabon.ga' },
+      { label: 'Nous écrire', hash: 'contact' },
+    ],
+  },
+]
+
+const socials = [
+  { name: 'Facebook', href: 'https://facebook.com', emoji: '👍' },
+  { name: 'Instagram', href: 'https://instagram.com', emoji: '📸' },
+  { name: 'TikTok', href: 'https://tiktok.com', emoji: '🎵' },
+  { name: 'WhatsApp', href: 'https://wa.me/24101234567', emoji: '💬' },
+]
+
+export default function Footer({ onNavigate }: { onNavigate: (page: Page, section?: string) => void }) {
+  const [email, setEmail] = useState('')
+  const [honeypot, setHoneypot] = useState('')
+  const [error, setError] = useState('')
+  const [done, setDone] = useState(false)
+  const startedAt = useRef(Date.now())
+
+  function subscribe(e: FormEvent) {
+    e.preventDefault()
+    if (!isEmail(email)) {
+      setError('Entrez une adresse e-mail valide.')
+      return
+    }
+    setError('')
+    if (looksLikeSpam(honeypot, startedAt.current, 1500)) return
+    setDone(true)
+    setEmail('')
+    toast.success('Bienvenue dans la récolte ! 🌱')
+  }
+
+  const go = (l: Link) => {
+    if (l.page) onNavigate(l.page)
+    else if (l.hash) onNavigate(l.hash === 'contact' ? 'contact' : 'accueil', l.hash)
+  }
+
   return (
-    <footer
-      id="contact"
-      className="relative overflow-hidden text-white noise"
-      style={{
-        background:
-          'radial-gradient(800px 500px at 20% 0%, #15603C 0%, transparent 60%), radial-gradient(900px 500px at 85% 100%, #1F7A4C 0%, transparent 55%), linear-gradient(135deg, #041A10 0%, #082E1E 40%, #0E4A30 100%)',
-      }}
-    >
-      {/* Top border glow */}
-      <div
-        aria-hidden
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(227,190,82,0.6), transparent)' }}
-      />
-
-      {/* Giant display watermark (awwwards-style) */}
-      <div
-        aria-hidden
-        className="absolute -bottom-8 sm:-bottom-16 left-0 right-0 text-center pointer-events-none select-none"
-      >
-        <div className="font-display italic font-semibold text-white/[0.04] text-[22vw] leading-[0.85] whitespace-nowrap">
-          Manioc Gabon
-        </div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-20 pb-8">
-        {/* Newsletter banner */}
-        <div className="mb-16 p-8 lg:p-12 rounded-3xl glass-dark border border-white/10 relative overflow-hidden">
-          <div
-            aria-hidden
-            className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl opacity-40"
-            style={{ background: 'radial-gradient(circle, rgba(227,190,82,0.6), transparent 70%)' }}
-          />
-          <div className="relative grid lg:grid-cols-2 gap-6 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[0.65rem] uppercase tracking-[0.24em] text-white/80 mb-4">
-                <Leaf className="w-3 h-3 text-gold-400" />
-                Newsletter
-              </div>
-              <h3 className="font-display text-3xl sm:text-4xl font-semibold leading-tight">
-                Rejoignez notre <span className="italic text-shimmer-gold">récolte</span>.
-              </h3>
-              <p className="text-white/70 mt-3 max-w-md">
-                Recevez les nouveautés saisonnières, recettes exclusives et offres réservées à nos abonnés.
-              </p>
+    <footer className="bg-cream-50 px-4 sm:px-6 text-[0.8125rem] text-ink-500">
+      <div className="mx-auto max-w-[1024px]">
+        {/* Newsletter */}
+        <div className="flex flex-col items-start justify-between gap-6 border-b border-black/10 py-12 md:flex-row md:items-center">
+          <div>
+            <h2 className="text-[1.5rem] font-semibold tracking-[-0.02em] text-ink-900">Recevez la récolte de la semaine.</h2>
+            <p className="mt-1 text-[0.9375rem]">Nouveautés, recettes et offres. Un e-mail par mois, pas plus.</p>
+          </div>
+          <form onSubmit={subscribe} noValidate className="w-full md:w-auto">
+            <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <input tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
             </div>
-            <form
-              className="flex flex-col sm:flex-row gap-2"
-              onSubmit={(e) => e.preventDefault()}
-            >
+            <div className="relative flex w-full md:w-[380px]">
+              <label htmlFor="nl-email" className="sr-only">Adresse e-mail</label>
               <input
+                id="nl-email"
                 type="email"
-                required
+                autoComplete="email"
                 placeholder="votre@email.com"
-                className="flex-1 px-5 py-3.5 rounded-full bg-white/10 border border-white/15 text-sm text-white placeholder:text-white/50 backdrop-blur-sm outline-none transition-colors focus:border-gold-400 focus:bg-white/15"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  setDone(false)
+                }}
+                aria-invalid={!!error}
+                className="h-12 w-full rounded-full border border-black/15 bg-white pl-5 pr-14 text-[0.9375rem] text-ink-900 outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-500/15"
               />
-              <Button type="submit" variant="gold" size="lg">
-                S'inscrire
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </form>
-          </div>
+              <button
+                type="submit"
+                aria-label="S’inscrire à la newsletter"
+                className="absolute right-1.5 top-1.5 grid h-9 w-9 place-items-center rounded-full bg-brand-700 text-white transition-colors hover:bg-brand-600 active:scale-90 cursor-pointer"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span key={done ? 'ok' : 'go'} initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }}>
+                    {done ? <Check className="h-4 w-4" strokeWidth={3} /> : <ArrowRight className="h-4 w-4" />}
+                  </motion.span>
+                </AnimatePresence>
+              </button>
+            </div>
+            {error && <p role="alert" className="mt-2 px-2 text-xs text-clay-500">{error}</p>}
+          </form>
         </div>
 
-        {/* Main grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 mb-14">
-          {/* About */}
-          <div className="lg:col-span-4">
-            <div className="flex items-center gap-3 mb-5">
-              <span className="grid place-items-center w-11 h-11 rounded-2xl bg-white/10 border border-white/10">
-                <img src="/logo.png" alt="" className="w-7 h-7 object-contain" />
-              </span>
-              <div>
-                <div className="font-display text-xl font-semibold leading-none">Manioc Gabon</div>
-                <div className="text-[0.65rem] uppercase tracking-[0.22em] text-gold-400 mt-1">Terroir · Gabon</div>
-              </div>
+        {/* Columns */}
+        <div className="grid grid-cols-2 gap-8 py-10 md:grid-cols-4">
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2">
+              <img src="/logo.png" alt="" className="h-8 w-auto" width={26} height={32} />
+              <span className="text-[0.9375rem] font-semibold text-ink-900">Manioc Gabon</span>
             </div>
-            <p className="text-white/70 leading-relaxed text-[0.95rem] mb-6 max-w-sm">
-              Producteur engagé, fournisseur de manioc frais, bio et transformé. Directement issu des meilleurs terroirs gabonais.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs">
-                <Leaf className="w-3 h-3 text-brand-300" />
-                Bio certifié
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs">
-                <MapPin className="w-3 h-3 text-gold-400" />
-                Made in Gabon
-              </span>
-            </div>
-          </div>
-
-          {/* Quick links */}
-          <div className="lg:col-span-2">
-            <h3 className="text-xs uppercase tracking-[0.22em] text-gold-400 mb-5">Navigation</h3>
-            <ul className="space-y-3">
-              {footerLinks.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="group inline-flex items-center gap-2 text-sm text-white/75 hover:text-white transition-colors"
-                  >
-                    <span className="w-0 group-hover:w-4 h-px bg-gold-400 transition-all duration-300" />
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">{link.label}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div className="lg:col-span-3">
-            <h3 className="text-xs uppercase tracking-[0.22em] text-gold-400 mb-5">Contact</h3>
-            <ul className="space-y-4 text-sm">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 mt-0.5 text-brand-300 shrink-0" />
-                <span className="text-white/80 leading-relaxed">
-                  Libreville, Gabon<br />
-                  Quartier Montagne Sainte
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Phone className="w-4 h-4 mt-0.5 text-brand-300 shrink-0" />
-                <a href="tel:+24101234567" className="text-white/80 hover:text-white transition-colors leading-relaxed">
-                  +241 01 23 45 67<br />+241 07 89 01 23
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <Mail className="w-4 h-4 mt-0.5 text-brand-300 shrink-0" />
-                <a href="mailto:contact@maniocgabon.ga" className="text-white/80 hover:text-white transition-colors leading-relaxed">
-                  contact@maniocgabon.ga<br />commandes@maniocgabon.ga
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="w-4 h-4 mt-0.5 text-brand-300 shrink-0" />
-                <span className="text-white/80 leading-relaxed">
-                  Lun – Ven : 8h – 18h<br />Sam : 8h – 14h
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Social */}
-          <div className="lg:col-span-3">
-            <h3 className="text-xs uppercase tracking-[0.22em] text-gold-400 mb-5">Nous suivre</h3>
-            <div className="flex gap-2.5 mb-6">
-              {socialNetworks.map((s) => (
+            <p className="mt-3 max-w-[220px] leading-relaxed">Le manioc du terroir gabonais, du champ à votre table.</p>
+            <div className="mt-4 flex gap-2">
+              {socials.map((s) => (
                 <a
                   key={s.name}
-                  href="#"
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={s.name}
-                  className="grid place-items-center w-11 h-11 rounded-full bg-white/5 border border-white/10 text-lg hover:bg-white/15 hover:border-white/25 hover:-translate-y-0.5 transition-all duration-300"
+                  className="grid h-9 w-9 place-items-center rounded-full bg-white text-base shadow-sm transition-transform hover:-translate-y-1 hover:rotate-12 active:scale-90"
                 >
-                  {s.icon}
+                  {s.emoji}
                 </a>
               ))}
             </div>
-            <p className="text-white/60 text-sm leading-relaxed">
-              Plus de <span className="text-white font-semibold">12k</span> amoureux du manioc nous suivent déjà.
-            </p>
           </div>
+          {columns.map((c) => (
+            <nav key={c.title} aria-label={c.title}>
+              <h3 className="font-semibold text-ink-900">{c.title}</h3>
+              <ul className="mt-3 space-y-2.5">
+                {c.links.map((l) => (
+                  <li key={l.label}>
+                    {l.href ? (
+                      <a href={l.href} className="hover:text-ink-900 hover:underline underline-offset-2">{l.label}</a>
+                    ) : (
+                      <button onClick={() => go(l)} className="text-left hover:text-ink-900 hover:underline underline-offset-2 cursor-pointer">
+                        {l.label}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
-        {/* Bottom */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/55">
-            © {new Date().getFullYear()} Manioc Gabon. Tous droits réservés.
-          </p>
-          <div className="flex gap-6 text-xs text-white/60">
-            <a href="#" className="hover:text-white transition-colors">Mentions légales</a>
-            <a href="#" className="hover:text-white transition-colors">Confidentialité</a>
-            <a href="#" className="hover:text-white transition-colors">CGV</a>
-          </div>
+        {/* Legal */}
+        <div className="flex flex-col gap-3 border-t border-black/10 py-6 text-xs md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} Manioc Gabon. Tous droits réservés. Fait avec 🌿 à Libreville.</p>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+            {(
+              [
+                ['Confidentialité', 'confidentialite'],
+                ['Conditions générales', 'cgu'],
+                ['Mentions légales', 'mentions'],
+              ] as const
+            ).map(([label, page]) => (
+              <li key={page}>
+                <button onClick={() => onNavigate(page)} className="hover:text-ink-900 hover:underline cursor-pointer">
+                  {label}
+                </button>
+              </li>
+            ))}
+            <li>
+              <button
+                onClick={() => window.dispatchEvent(new Event('mg:open-cookies'))}
+                className="hover:text-ink-900 hover:underline cursor-pointer"
+              >
+                Gérer les cookies
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>
