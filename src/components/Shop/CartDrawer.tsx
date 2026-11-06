@@ -64,7 +64,7 @@ export function CartDrawer() {
                       Plus que <strong className="text-ink-900">{formatFCFA(remaining)}</strong> pour la livraison offerte.
                     </>
                   ) : (
-                    <strong className="text-brand-700">🎉 Livraison offerte débloquée !</strong>
+                    <strong className="text-brand-700">🎉 Livraison offerte débloquée !</strong>
                   )}
                 </p>
                 <div className="relative mt-4 h-1.5 rounded-full bg-cream-100">
@@ -93,7 +93,7 @@ export function CartDrawer() {
                 <div className="flex h-full flex-col items-center justify-center pb-16 text-center">
                   <Mascot className="h-32 w-32" />
                   <p className="mt-4 text-lg font-semibold text-ink-900">Votre panier est vide.</p>
-                  <p className="mt-1 text-sm text-ink-500">Mani a faim… ajoutez-lui quelque chose !</p>
+                  <p className="mt-1 text-sm text-ink-500">Mani a faim… ajoutez-lui quelque chose !</p>
                   <Button variant="link" className="mt-3" onClick={() => {
                     closeCart()
                     document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth' })

@@ -6,7 +6,7 @@ const facts = [
   'Le manioc pousse même quand il ne pleut presque pas. Un vrai dur à cuire.',
   'Un seul plant peut donner jusqu’à 10 kg de tubercules.',
   'Ses racines peuvent rester en terre jusqu’à deux ans : c’est un garde-manger naturel.',
-  'Le tapioca de votre dessert ? C’est du manioc !',
+  'Le tapioca de votre dessert ? C’est du manioc !',
   'Le manioc est naturellement sans gluten.',
   'Les feuilles de manioc contiennent plus de protéines que beaucoup de légumes verts.',
   'Le bâton de manioc est fermenté puis cuit dans des feuilles. Patience récompensée.',
@@ -52,7 +52,7 @@ export default function FunFacts() {
         </div>
 
         <div>
-          <p className="text-[0.95rem] font-semibold text-gold-300">Le saviez-vous ?</p>
+          <p className="text-[0.95rem] font-semibold text-gold-300">Le saviez-vous ?</p>
           <h2 className="mt-2 text-[clamp(2rem,4.5vw,3rem)] font-semibold leading-[1.08] tracking-[-0.03em]">
             Mani a des choses à vous dire.
           </h2>
@@ -92,7 +92,7 @@ export default function FunFacts() {
                 ))}
               </span>
               <span>
-                {complete ? '🏆 Expert du manioc !' : `${seen.size}/${facts.length} découvertes`}
+                {complete ? '🏆 Expert du manioc !' : `${seen.size}/${facts.length} découvertes`}
               </span>
             </div>
           </div>

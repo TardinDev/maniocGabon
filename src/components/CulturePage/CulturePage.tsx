@@ -1,484 +1,274 @@
-import { motion, useReducedMotion } from 'motion/react'
-import {
-  Leaf,
-  Sprout,
-  Scissors,
-  CloudRain,
-  Wheat,
-  Tractor,
-  Landmark,
-  Drama,
-  Rocket,
-  AlertTriangle,
-  CheckCircle2,
-  Dot,
-} from 'lucide-react'
+import { useRef } from 'react'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { CheckCircle2, CloudRain, Scissors, Sprout, Wheat, AlertTriangle } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { AnimatedNumber } from '../ui/AnimatedNumber'
+import { Button } from '../ui'
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0 },
+const ease = [0.22, 1, 0.36, 1] as const
+
+const reveal = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-80px' },
+  transition: { duration: 0.7, ease },
 }
 
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
-}
+const facts = [
+  { value: 12, prefix: '8–', suffix: ' mois', label: 'de la bouture à la récolte' },
+  { value: 2, suffix: ' kg', label: 'pour un beau tubercule' },
+  { value: 2, suffix: ' ans', label: 'en terre sans s’abîmer' },
+  { value: 0, suffix: ' g', label: 'de gluten' },
+]
+
+const steps: { Icon: LucideIcon; title: string; text: string }[] = [
+  { Icon: Sprout, title: 'Préparer le sol', text: 'Défrichage et brûlis léger : les cendres enrichissent la terre.' },
+  { Icon: Scissors, title: 'Bouturer', text: 'On plante des tiges de 20 à 25 cm prélevées sur les plus beaux pieds.' },
+  { Icon: CloudRain, title: 'Attendre la pluie', text: 'Plantation en octobre–novembre, au début de la saison des pluies.' },
+  { Icon: Wheat, title: 'Récolter', text: 'Après 8 à 12 mois, on déterre les tubercules selon les besoins.' },
+]
+
+const varieties = [
+  {
+    name: 'Le manioc doux',
+    image: '/imagesproducts/tubercule.jpg',
+    text: 'Pauvre en composés amers, il se cuit simplement : bouilli, frit ou grillé.',
+    uses: 'Frites, gâteaux, accompagnements',
+  },
+  {
+    name: 'Le manioc amer',
+    image: '/imagesproducts/racines.jpg',
+    text: 'Riche en amidon, il doit être roui et fermenté avant d’être consommé.',
+    uses: 'Bâtons, farine, tapioca',
+  },
+  {
+    name: 'Les feuilles',
+    image: '/imagesproducts/feuilles.jpg',
+    text: 'Pilées puis mijotées des heures, elles sont un plat à part entière.',
+    uses: 'Feuilles à l’huile de palme',
+  },
+]
 
 export default function CulturePage() {
+  const heroRef = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start end', 'end start'] })
+  const scale = useTransform(scrollYProgress, [0, 0.5], reduce ? [1, 1] : [0.92, 1])
+  const imgY = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['-5%', '5%'])
 
   return (
-    <section className="relative py-16 px-4 sm:px-8 bg-gradient-to-b from-emerald-50 to-white min-h-[80vh] overflow-hidden">
-      {/* Decorative blob */}
-      {!reduce && (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full blur-[120px] opacity-40"
-          style={{ background: 'radial-gradient(circle, rgba(132,212,165,0.7), transparent 70%)' }}
-          animate={{ x: [0, 24, -16, 0], y: [0, -18, 24, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      )}
-
-      <div className="relative max-w-6xl mx-auto">
-        {/* Titre principal */}
-        <motion.header
-          className="text-center mb-16"
-          initial="hidden"
-          animate="visible"
-          variants={stagger}
+    <main className="bg-paper">
+      {/* Hero */}
+      <header className="px-6 pt-16 text-center sm:pt-24">
+        <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="eyebrow">
+          Culture
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.06, ease }}
+          className="mx-auto mt-2 max-w-[900px] text-[clamp(2.75rem,7vw,5rem)] font-bold leading-[1.02] tracking-[-0.04em] text-ink-900 text-balance"
         >
-          <motion.span
-            variants={fadeUp}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-600/10 ring-1 ring-emerald-600/20 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800 mb-6"
-          >
-            <Sprout className="w-3.5 h-3.5" aria-hidden="true" />
-            Patrimoine Gabonais
-          </motion.span>
-          <motion.h1
-            variants={fadeUp}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-emerald-900 mb-6"
-          >
-            Culture du Manioc au Gabon
-          </motion.h1>
-          <motion.p
-            variants={fadeUp}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="text-lg sm:text-xl text-emerald-800/80 max-w-3xl mx-auto leading-relaxed"
-          >
-            Découvrez l'histoire, les traditions et les techniques de culture du manioc,
-            aliment de base emblématique du Gabon
-          </motion.p>
-        </motion.header>
+          Une racine. <span className="text-ink-400">Tout un pays.</span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.14, ease }}
+          className="mx-auto mt-5 max-w-[620px] text-[1.1875rem] leading-relaxed text-ink-500 sm:text-[1.3125rem]"
+        >
+          Venu d’Amérique du Sud il y a plusieurs siècles, le manioc est devenu le cœur de la cuisine gabonaise. Voici son histoire.
+        </motion.p>
+      </header>
 
-        {/* Section Histoire */}
-        <div className="mb-16">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span className="block text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80 mb-3">
-                Chapitre 01 — Racines
-              </span>
-              <h2 className="flex items-center gap-3 text-3xl sm:text-4xl font-bold text-emerald-900 mb-6">
-                <Leaf className="w-8 h-8 text-emerald-600" aria-hidden="true" />
-                Histoire et Origines
-              </h2>
-              <div className="space-y-4 text-slate-700 leading-relaxed">
-                <p className="text-lg">
-                  Le manioc (Manihot esculenta) est cultivé au Gabon depuis des siècles.
-                  Originaire d'Amérique du Sud, cette plante s'est parfaitement adaptée
-                  au climat tropical gabonais.
-                </p>
-                <p>
-                  Introduit par les premiers explorateurs, le manioc est rapidement devenu
-                  un pilier de l'alimentation gabonaise, particulièrement apprécié pour sa
-                  résistance aux conditions climatiques difficiles et sa facilité de culture.
-                </p>
-                <p>
-                  Aujourd'hui, le Gabon produit plus de <strong>230 000 tonnes</strong> de
-                  manioc par an, faisant de cette culture l'une des plus importantes du pays.
-                </p>
-              </div>
+      <div className="mx-auto mt-14 max-w-[1200px] px-4 sm:px-6">
+        <motion.div
+          ref={heroRef}
+          style={{ scale }}
+          className="relative aspect-[4/3] overflow-hidden rounded-[32px] shadow-[var(--shadow-modal)] sm:aspect-[21/9]"
+        >
+          <motion.img
+            src="/banniere.jpg"
+            alt="Feuilles, bâtons et tubercules de manioc"
+            style={{ y: imgY }}
+            className="absolute inset-x-0 -top-[6%] h-[112%] w-full object-cover"
+          />
+        </motion.div>
+      </div>
+
+      {/* Key facts */}
+      <section className="mx-auto max-w-[1000px] px-6 py-20">
+        <dl className="grid grid-cols-2 gap-y-10 text-center md:grid-cols-4">
+          {facts.map((f) => (
+            <motion.div key={f.label} {...reveal} className="flex flex-col-reverse">
+              <dt className="mt-1 text-sm text-ink-500">{f.label}</dt>
+              <dd className="text-[2.5rem] font-semibold tracking-[-0.03em] text-ink-900">
+                <AnimatedNumber value={f.value} prefix={f.prefix} suffix={f.suffix} />
+              </dd>
             </motion.div>
+          ))}
+        </dl>
+      </section>
 
-            <motion.div
-              className="bg-gradient-to-br from-emerald-100 to-emerald-50 p-8 rounded-2xl"
-              initial={{ opacity: 0, x: 32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="flex justify-center mb-4">
-                <motion.div
-                  className="w-20 h-20 rounded-2xl bg-emerald-600/10 ring-1 ring-emerald-600/20 flex items-center justify-center"
-                  animate={reduce ? undefined : { rotate: [0, 6, -4, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                >
-                  <Sprout className="w-10 h-10 text-emerald-600" aria-hidden="true" />
-                </motion.div>
-              </div>
-              <motion.dl
-                className="grid grid-cols-2 gap-4 text-center"
-                variants={stagger}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-40px' }}
-              >
-                {[
-                  { value: 230, suffix: 'k', label: 'Tonnes/an' },
-                  { value: 85, suffix: '%', label: 'Des familles' },
-                  { value: 12, suffix: '', label: 'Mois/cycle' },
-                  { value: 40, suffix: '%', label: 'Calories/jour' },
-                ].map((stat, i) => (
-                  <motion.div
-                    key={i}
-                    variants={fadeUp}
-                    transition={{ duration: 0.4 }}
-                    whileHover={reduce ? undefined : { y: -2, scale: 1.03 }}
-                    className="bg-white p-4 rounded-xl shadow-sm ring-1 ring-slate-900/5"
-                  >
-                    <dt className="text-2xl font-bold text-emerald-700">
-                      <AnimatedNumber value={stat.value} suffix={stat.suffix} />
-                    </dt>
-                    <dd className="text-sm text-slate-600 mt-1">{stat.label}</dd>
-                  </motion.div>
-                ))}
-              </motion.dl>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Section Techniques de culture */}
-        <div className="mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.4 }}
-            className="text-center mb-3"
-          >
-            <span className="text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80">
-              Chapitre 02 — Savoir-faire
-            </span>
+      {/* Chapter 1 — History */}
+      <section className="section bg-cream-50 px-6">
+        <div className="mx-auto grid max-w-[1100px] items-center gap-12 lg:grid-cols-2">
+          <motion.div {...reveal}>
+            <p className="eyebrow">Chapitre 1 · Racines</p>
+            <h2 className="mt-2 text-[clamp(2rem,4.5vw,3rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-ink-900">
+              Arrivé par la mer. Adopté par la forêt.
+            </h2>
+            <div className="mt-6 space-y-4 text-[1.0625rem] leading-relaxed text-ink-700">
+              <p>
+                Originaire d’Amérique du Sud, le manioc (<em>Manihot esculenta</em>) a traversé l’Atlantique au XVI<sup>e</sup> siècle avant de gagner
+                les forêts d’Afrique centrale.
+              </p>
+              <p>
+                Il s’y est imposé grâce à sa robustesse : il pousse sur des sols pauvres, résiste à la sécheresse et peut rester en terre jusqu’à ce qu’on en ait besoin.
+              </p>
+              <p>Aujourd’hui, il est présent à presque tous les repas, de Libreville à Oyem.</p>
+            </div>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center justify-center gap-3 text-3xl sm:text-4xl font-bold text-emerald-900 mb-12 text-center"
-          >
-            <Tractor className="w-8 h-8 text-emerald-600" aria-hidden="true" />
-            Techniques de Culture Traditionnelles
-          </motion.h2>
+          <motion.div {...reveal} className="relative">
+            <img src="/imagesproducts/tubercules.jpg" alt="Tubercules de manioc fraîchement coupés" loading="lazy" className="aspect-[4/3] w-full rounded-[28px] object-cover shadow-[var(--shadow-card)]" />
+            <motion.span
+              whileHover={{ rotate: 12, scale: 1.1 }}
+              className="absolute -bottom-5 -left-3 grid h-16 w-16 place-items-center rounded-full bg-white text-3xl shadow-[var(--shadow-hover)] sm:-left-5"
+              aria-hidden
+            >
+              🌍
+            </motion.span>
+          </motion.div>
+        </div>
+      </section>
 
-          <motion.ul
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 list-none"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-          >
-            {[
-              {
-                Icon: Sprout,
-                title: 'Préparation du Sol',
-                description: 'Défrichage et brûlis traditionnel pour enrichir le sol en cendres nutritives',
-              },
-              {
-                Icon: Scissors,
-                title: 'Bouturage',
-                description: 'Plantation de boutures de 20-25cm provenant de plants mères sélectionnés',
-              },
-              {
-                Icon: CloudRain,
-                title: 'Saison des Pluies',
-                description:
-                  'Plantation en début de saison des pluies (octobre-novembre) pour optimiser la croissance',
-              },
-              {
-                Icon: Wheat,
-                title: 'Récolte',
-                description: 'Récolte après 8-12 mois, tubercules pouvant peser jusqu\'à 2kg chacun',
-              },
-            ].map((step, index) => (
+      {/* Chapter 2 — Know-how */}
+      <section className="section px-6">
+        <div className="mx-auto max-w-[1100px]">
+          <motion.div {...reveal} className="text-center">
+            <p className="eyebrow">Chapitre 2 · Savoir-faire</p>
+            <h2 className="mt-2 text-[clamp(2rem,4.5vw,3rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-ink-900">
+              Un an de patience.
+            </h2>
+          </motion.div>
+          <ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map(({ Icon, title, text }, i) => (
               <motion.li
-                key={index}
-                variants={fadeUp}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={reduce ? undefined : { y: -6 }}
-                className="group bg-white p-6 rounded-2xl shadow-sm ring-1 ring-slate-900/5 hover:shadow-lg transition-shadow"
+                key={title}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: i * 0.08 }}
+                className="hover-wiggle rounded-[22px] bg-white p-7 shadow-[var(--shadow-card)]"
               >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 rounded-xl bg-emerald-600/10 ring-1 ring-emerald-600/15 flex items-center justify-center transition-transform group-hover:scale-105">
-                    <step.Icon className="w-7 h-7 text-emerald-700" aria-hidden="true" />
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+                    <Icon className="wiggle-target h-5 w-5" strokeWidth={1.8} />
+                  </span>
+                  <span className="text-sm font-semibold text-ink-400 tabular-nums">0{i + 1}</span>
                 </div>
-                <h3 className="text-lg font-bold text-emerald-900 mb-2 text-center">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-slate-600 text-center leading-relaxed">
-                  {step.description}
-                </p>
+                <h3 className="mt-5 text-[1.1875rem] font-semibold tracking-[-0.02em] text-ink-900">{title}</h3>
+                <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-500">{text}</p>
               </motion.li>
             ))}
-          </motion.ul>
+          </ol>
         </div>
+      </section>
 
-        {/* Section Variétés */}
-        <div className="mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.4 }}
-            className="text-center mb-3"
-          >
-            <span className="text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80">
-              Chapitre 03 — Diversité
-            </span>
+      {/* Chapter 3 — Varieties */}
+      <section className="section bg-cream-50 px-4 sm:px-6">
+        <div className="mx-auto max-w-[1100px]">
+          <motion.div {...reveal} className="text-center">
+            <p className="eyebrow">Chapitre 3 · Diversité</p>
+            <h2 className="mt-2 text-[clamp(2rem,4.5vw,3rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-ink-900">
+              Une plante, trois cuisines.
+            </h2>
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center justify-center gap-3 text-3xl sm:text-4xl font-bold text-emerald-900 mb-12 text-center"
-          >
-            <Leaf className="w-8 h-8 text-emerald-600" aria-hidden="true" />
-            Variétés Cultivées au Gabon
-          </motion.h2>
-
-          <motion.div
-            className="grid md:grid-cols-3 gap-6"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-          >
-            {[
-              {
-                name: 'Manioc Doux',
-                characteristics: 'Faible teneur en cyanure, consommation directe possible',
-                uses: 'Bouilli, grillé, en tubercules',
-                gradient: 'from-emerald-500 to-emerald-700',
-              },
-              {
-                name: 'Manioc Amer',
-                characteristics: 'Riche en amidon, nécessite transformation',
-                uses: 'Farine, tapioca, boissons fermentées',
-                gradient: 'from-teal-500 to-emerald-700',
-              },
-              {
-                name: 'Manioc Rouge',
-                characteristics: 'Chair rougeâtre, très nutritif',
-                uses: 'Plats traditionnels, cérémonies',
-                gradient: 'from-orange-500 to-red-600',
-              },
-            ].map((variety, index) => (
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {varieties.map((v, i) => (
               <motion.article
-                key={index}
-                variants={fadeUp}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={reduce ? undefined : { y: -6, scale: 1.01 }}
-                className="relative overflow-hidden rounded-2xl shadow-md ring-1 ring-slate-900/5"
+                key={v.name}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: i * 0.08 }}
+                className="group overflow-hidden rounded-[22px] bg-white shadow-[var(--shadow-card)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-hover)]"
               >
-                {!reduce && (
-                  <motion.div
-                    aria-hidden="true"
-                    className="absolute inset-0 bg-white/15 pointer-events-none"
-                    initial={{ x: '-120%' }}
-                    whileHover={{ x: '120%' }}
-                    transition={{ duration: 0.7 }}
-                  />
-                )}
-                <div className={`bg-gradient-to-br ${variety.gradient} p-8 text-white relative`}>
-                  <h3 className="text-2xl font-bold mb-4">{variety.name}</h3>
-                  <dl className="space-y-3">
-                    <div>
-                      <dt className="font-semibold mb-1">Caractéristiques</dt>
-                      <dd className="text-sm text-white/90">{variety.characteristics}</dd>
-                    </div>
-                    <div>
-                      <dt className="font-semibold mb-1">Utilisations</dt>
-                      <dd className="text-sm text-white/90">{variety.uses}</dd>
-                    </div>
-                  </dl>
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img src={v.image} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+                <div className="p-7">
+                  <h3 className="text-[1.3125rem] font-semibold tracking-[-0.02em] text-ink-900">{v.name}</h3>
+                  <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-500">{v.text}</p>
+                  <p className="mt-4 text-sm font-medium text-brand-700">{v.uses}</p>
                 </div>
               </motion.article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Chapter 4 — Heritage */}
+      <section className="section bg-ink-900 px-6 text-white">
+        <motion.div {...reveal} className="mx-auto max-w-[860px] text-center">
+          <p className="text-sm font-semibold text-gold-300">Chapitre 4 · Héritage</p>
+          <h2 className="mt-4 text-[clamp(1.75rem,4vw,2.75rem)] font-semibold leading-[1.2] tracking-[-0.03em] text-balance">
+            Le bâton de manioc s’apprend en regardant faire. Pas dans un livre.
+          </h2>
+          <p className="mx-auto mt-8 max-w-[640px] text-[1.0625rem] leading-relaxed text-white/70">
+            Rouissage, fermentation, pilage, cuisson dans les feuilles : ces gestes se transmettent de génération en génération.
+            Chaque région a ses méthodes et ses spécialités, et le manioc accompagne les fêtes comme les repas de tous les jours.
+          </p>
+        </motion.div>
+      </section>
+
+      {/* Chapter 5 — Future */}
+      <section className="section px-6">
+        <div className="mx-auto max-w-[1100px]">
+          <motion.div {...reveal} className="text-center">
+            <p className="eyebrow">Chapitre 5 · Avenir</p>
+            <h2 className="mt-2 text-[clamp(2rem,4.5vw,3rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-ink-900">
+              Moderniser sans rien oublier.
+            </h2>
           </motion.div>
-        </div>
-
-        {/* Section Importance culturelle */}
-        <div className="mb-16">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 rounded-2xl ring-1 ring-emerald-900/5"
-              initial={{ opacity: 0, x: -32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="text-center mb-6">
-                <div className="mx-auto w-16 h-16 rounded-2xl bg-emerald-600/10 ring-1 ring-emerald-600/20 flex items-center justify-center mb-3">
-                  <Landmark className="w-8 h-8 text-emerald-700" aria-hidden="true" />
-                </div>
-                <h3 className="text-2xl font-bold text-emerald-900">Patrimoine Culturel</h3>
-              </div>
-              <motion.ul
-                className="space-y-3 text-slate-700"
-                variants={stagger}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                {[
-                  'Aliment de base dans 90% des foyers gabonais',
-                  'Présent dans les cérémonies traditionnelles',
-                  'Symbole de sécurité alimentaire',
-                  'Transmission de savoir ancestral',
-                ].map((item, i) => (
-                  <motion.li
-                    key={i}
-                    variants={fadeUp}
-                    transition={{ duration: 0.35 }}
-                    className="flex items-start gap-3"
-                  >
-                    <Dot className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    <span>{item}</span>
-                  </motion.li>
-                ))}
-              </motion.ul>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span className="block text-xs font-semibold tracking-[0.22em] uppercase text-emerald-700/80 mb-3">
-                Chapitre 04 — Héritage
-              </span>
-              <h2 className="flex items-center gap-3 text-3xl sm:text-4xl font-bold text-emerald-900 mb-6">
-                <Drama className="w-8 h-8 text-emerald-600" aria-hidden="true" />
-                Importance Culturelle
-              </h2>
-              <div className="space-y-4 text-slate-700 leading-relaxed">
-                <p className="text-lg">
-                  Au-delà de son importance nutritionnelle, le manioc occupe une place
-                  centrale dans la culture gabonaise. Il est présent dans les rites de
-                  passage, les célébrations et les traditions culinaires familiales.
-                </p>
-                <p>
-                  Les techniques de transformation du manioc se transmettent de mère en
-                  fille depuis des générations. Chaque région du Gabon a développé ses
-                  propres méthodes de préparation et ses spécialités culinaires.
-                </p>
-                <p>
-                  Le manioc représente également un symbole de résilience pour le peuple
-                  gabonais, capable de nourrir les familles même pendant les périodes difficiles.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Section Défis et perspectives */}
-        <motion.section
-          className="bg-gradient-to-br from-emerald-900 to-emerald-700 text-white p-8 lg:p-12 rounded-2xl relative overflow-hidden"
-          initial={{ opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {!reduce && (
-            <motion.div
-              aria-hidden="true"
-              className="absolute -top-24 -right-24 w-[400px] h-[400px] rounded-full blur-[100px] opacity-30 pointer-events-none"
-              style={{ background: 'radial-gradient(circle, rgba(134,239,172,0.6), transparent 70%)' }}
-              animate={{ x: [0, 30, -20, 0], y: [0, -20, 30, 0] }}
-              transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          )}
-          <div className="text-center mb-12 relative">
-            <span className="block text-xs font-semibold tracking-[0.22em] uppercase text-emerald-200/80 mb-3">
-              Chapitre 05 — Avenir
-            </span>
-            <div className="inline-flex mb-4 w-14 h-14 rounded-2xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
-              <Rocket className="w-7 h-7 text-white" aria-hidden="true" />
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Défis et Perspectives</h2>
-            <p className="text-lg text-white/85 max-w-3xl mx-auto">
-              Moderniser la culture du manioc tout en préservant les traditions
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 relative">
+          <div className="mt-14 grid gap-6 md:grid-cols-2">
             {[
               {
-                title: 'Défis Actuels',
+                title: 'Les défis',
                 Icon: AlertTriangle,
-                iconClass: 'text-amber-300',
-                items: [
-                  'Vieillissement des agriculteurs',
-                  'Méthodes de culture traditionnelles limitées',
-                  'Accès limité aux marchés urbains',
-                  'Transformation artisanale uniquement',
-                ],
+                tint: 'text-clay-500',
+                items: ['Des agriculteurs de plus en plus âgés', 'Des rendements encore faibles', 'Un accès difficile aux marchés urbains', 'Une transformation surtout artisanale'],
               },
               {
-                title: 'Solutions Innovantes',
+                title: 'Nos réponses',
                 Icon: CheckCircle2,
-                iconClass: 'text-emerald-300',
-                items: [
-                  'Formation des jeunes agriculteurs',
-                  'Techniques de culture améliorées',
-                  'Développement de coopératives',
-                  'Unités de transformation modernes',
-                ],
+                tint: 'text-brand-600',
+                items: ['Former et équiper les jeunes producteurs', 'Partager des techniques de culture améliorées', 'Vendre en direct grâce aux coopératives', 'Payer chaque récolte au juste prix'],
               },
-            ].map((block, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: idx === 0 ? -24 : 24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.55, delay: idx * 0.1 }}
-              >
-                <h3 className="text-xl font-bold mb-4 text-white">{block.title}</h3>
-                <motion.ul
-                  className="space-y-3"
-                  variants={stagger}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                >
-                  {block.items.map((item, i) => (
-                    <motion.li
-                      key={i}
-                      variants={fadeUp}
-                      transition={{ duration: 0.35 }}
-                      className="flex items-start gap-3"
-                    >
-                      <block.Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${block.iconClass}`} aria-hidden="true" />
-                      <span className="text-white/95">{item}</span>
-                    </motion.li>
+            ].map((b, i) => (
+              <motion.div key={b.title} {...reveal} transition={{ ...reveal.transition, delay: i * 0.1 }} className="rounded-[28px] bg-white p-8 shadow-[var(--shadow-card)] sm:p-10">
+                <h3 className="text-[1.5rem] font-semibold tracking-[-0.02em] text-ink-900">{b.title}</h3>
+                <ul className="mt-6 space-y-4">
+                  {b.items.map((it) => (
+                    <li key={it} className="flex items-start gap-3 text-[1.0625rem] text-ink-700">
+                      <b.Icon className={`mt-0.5 h-5 w-5 shrink-0 ${b.tint}`} aria-hidden />
+                      {it}
+                    </li>
                   ))}
-                </motion.ul>
+                </ul>
               </motion.div>
             ))}
           </div>
-        </motion.section>
-      </div>
-    </section>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-cream-50 px-6 py-20 text-center">
+        <motion.div {...reveal}>
+          <h2 className="text-[clamp(2rem,4.5vw,3rem)] font-semibold tracking-[-0.03em] text-ink-900">Goûtez la différence.</h2>
+          <p className="mt-3 text-[1.1875rem] text-ink-500">Du champ à votre table en 48 heures.</p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-7">
+            <Button size="lg" onClick={() => (window.location.hash = 'produits')}>Voir la boutique</Button>
+            <Button variant="link" size="lg" onClick={() => (window.location.hash = 'recettes')}>Découvrir les recettes ›</Button>
+          </div>
+        </motion.div>
+      </section>
+    </main>
   )
 }

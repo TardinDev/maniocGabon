@@ -19,5 +19,9 @@ export default tseslint.config([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // French typography uses narrow no-break spaces before ? ! : in copy
+      'no-irregular-whitespace': ['error', { skipStrings: true, skipTemplates: true, skipJSXText: true }],
+    },
   },
 ])

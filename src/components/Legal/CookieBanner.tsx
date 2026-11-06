@@ -56,7 +56,7 @@ export function CookieBanner({ onNavigatePrivacy }: { onNavigatePrivacy: () => v
               🍪
             </motion.span>
             <div className="flex-1">
-              <p className="text-[0.9375rem] font-semibold text-ink-900">Un petit cookie ?</p>
+              <p className="text-[0.9375rem] font-semibold text-ink-900">Un petit cookie ?</p>
               <p className="mt-1 text-sm leading-relaxed text-ink-500">
                 Nous utilisons le stockage local pour mémoriser votre panier et vos favoris. Avec votre accord, nous
                 mesurerons aussi l’audience de façon anonyme.{' '}

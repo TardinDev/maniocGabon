@@ -4,23 +4,23 @@ import { Plus } from 'lucide-react'
 
 const faqs = [
   {
-    q: 'Où livrez-vous ?',
+    q: 'Où livrez-vous ?',
     a: 'À Libreville, Akanda et Owendo sous 24 à 48 h. Nous livrons aussi Port-Gentil, Franceville, Oyem, Moanda et Lambaréné : comptez 2 à 4 jours.',
   },
   {
-    q: 'Combien coûte la livraison ?',
+    q: 'Combien coûte la livraison ?',
     a: 'La livraison coûte 2 000 FCFA. Elle est offerte dès 10 000 FCFA d’achat.',
   },
   {
-    q: 'Comment payer ?',
+    q: 'Comment payer ?',
     a: 'Par Airtel Money ou Moov Money, par virement, ou en espèces à la livraison. Nous vous appelons toujours pour confirmer la commande avant de livrer.',
   },
   {
-    q: 'Combien de temps se conserve le manioc frais ?',
+    q: 'Combien de temps se conserve le manioc frais ?',
     a: 'Deux à trois jours à l’air libre. Épluché et immergé dans l’eau au réfrigérateur, il tient environ une semaine. Les bâtons se gardent quatre à cinq jours au frais.',
   },
   {
-    q: 'Puis-je commander pour un restaurant ou un événement ?',
+    q: 'Puis-je commander pour un restaurant ou un événement ?',
     a: 'Oui. Écrivez-nous via le formulaire ci-dessous ou sur WhatsApp : nous préparons des devis pour les professionnels et les grandes quantités.',
   },
 ]

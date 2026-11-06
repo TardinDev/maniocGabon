@@ -150,7 +150,7 @@ export function CheckoutModal() {
                     <Confetti />
                     <Mascot className="mx-auto h-36 w-36" hop={1} />
                     <h2 id="checkout-title" className="mt-6 text-[2rem] font-semibold tracking-[-0.03em] text-ink-900">
-                      Merci, {info.firstName} !
+                      Merci, {info.firstName} !
                     </h2>
                     <p className="mx-auto mt-3 max-w-md text-ink-500">
                       Votre commande <strong className="text-ink-900">{confirmed.number}</strong> est enregistrée. Nous vous
@@ -174,7 +174,7 @@ export function CheckoutModal() {
                   <form noValidate onSubmit={handleSubmit} className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_320px]">
                     <div>
                       <h2 id="checkout-title" className="text-[1.75rem] font-semibold tracking-[-0.025em] text-ink-900">
-                        Où devons-nous livrer ?
+                        Où devons-nous livrer ?
                       </h2>
                       <p className="mt-1 text-sm text-ink-500">Livraison sous 24 à 48 heures.</p>
 

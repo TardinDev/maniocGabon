@@ -29,7 +29,7 @@ export function NotFound({ onHome }: { onHome: () => void }) {
           <Mascot hop={escapes} talking={escapes >= 6} />
         </motion.div>
         <h1 className="mt-6 text-[1.75rem] font-semibold tracking-[-0.025em] text-ink-900">
-          {escapes >= 6 ? 'D’accord, vous m’avez eu !' : 'Cette page s’est enterrée.'}
+          {escapes >= 6 ? 'D’accord, vous m’avez eu !' : 'Cette page s’est enterrée.'}
         </h1>
         <p className="mx-auto mt-2 max-w-md text-[1.0625rem] text-ink-500">
           {escapes === 0
