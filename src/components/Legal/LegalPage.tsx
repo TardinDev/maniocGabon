@@ -91,6 +91,17 @@ const docs: Record<LegalKind, Doc> = {
         body: (
           <ul className="list-disc space-y-1 pl-5">
             <li>
+              « Woman in the market selling cassava » par Museruka Emmanuel,{' '}
+              <a className="text-brand-600 underline" href="https://commons.wikimedia.org/wiki/File:Woman_in_the_market_selling_cassava.jpg" target="_blank" rel="noopener noreferrer">
+                Wikimedia Commons
+              </a>
+              , licence{' '}
+              <a className="text-brand-600 underline" href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener noreferrer">
+                CC BY-SA 4.0
+              </a>
+              , redimensionnée et étalonnée.
+            </li>
+            <li>
               « Cassava chips from Kerala » par Ranjithsiji,{' '}
               <a className="text-brand-600 underline" href="https://commons.wikimedia.org/wiki/File:Cassava_chips_from_Kerala.jpg" target="_blank" rel="noopener noreferrer">
                 Wikimedia Commons

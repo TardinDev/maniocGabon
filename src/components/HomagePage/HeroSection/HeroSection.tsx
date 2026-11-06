@@ -1,54 +1,183 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
-import { Check, Plus, Smartphone, Sprout, Truck } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { ArrowLeft, ArrowRight, Smartphone, Sprout, Truck } from 'lucide-react'
 import { Button } from '../../ui'
-import { useShop } from '../../../hooks/useShop'
-import { products } from '../../../data'
-import { formatFCFA } from '../../../lib/format'
+import { cn } from '../../../lib/utils'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-const featured = products.find((p) => p.id === 6) ?? products[0]
+type Side = 'left' | 'right' | null
+
+const panels = {
+  left: {
+    src: '/images/marche-manioc.jpg',
+    alt: 'Deux vendeuses assises au marché derrière un étal de tubercules de manioc',
+    position: '46% 60%',
+    eyebrow: 'Au marché',
+    title: 'Le manioc passe de main en main.',
+    text: 'Chaque matin, les mamas installent leurs étals. C’est d’elles que nous tenons le goût du vrai manioc.',
+    filter: 'saturate(1.12) contrast(1.06) sepia(0.08)',
+  },
+  right: {
+    src: '/banniere.jpg',
+    alt: 'Tubercules de manioc et bâtons enveloppés dans des feuilles, posés sur des feuilles de manioc',
+    position: '58% 50%',
+    eyebrow: 'La récolte',
+    title: 'Racines, feuilles et bâtons.',
+    text: 'Cueillis le matin chez nos producteurs, livrés frais chez vous en 48 heures.',
+    filter: 'saturate(1.1) contrast(1.05)',
+  },
+} as const
 
 const trust = [
-  { Icon: Sprout, title: '100 % Gabon', text: 'Producteurs locaux' },
-  { Icon: Truck, title: '24 – 48 h', text: 'Livraison à Libreville' },
-  { Icon: Smartphone, title: 'Mobile Money', text: 'Ou paiement à la livraison' },
+  { Icon: Sprout, title: '100 % Gabon' },
+  { Icon: Truck, title: 'Livré en 48 h' },
+  { Icon: Smartphone, title: 'Mobile Money' },
 ]
 
+const scrollToShop = () => document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth' })
+
 export default function HeroSection({ onDiscover }: { onDiscover?: () => void }) {
-  const sectionRef = useRef<HTMLElement>(null)
-  const thumbRef = useRef<HTMLImageElement>(null)
+  return (
+    <>
+      <SplitHero onDiscover={onDiscover} />
+      <MobileHero onDiscover={onDiscover} />
+    </>
+  )
+}
+
+/* ───────────────────────── Desktop: split screen ───────────────────────── */
+
+const EDGE = 0.08
+
+function SplitHero({ onDiscover }: { onDiscover?: () => void }) {
+  const ref = useRef<HTMLElement>(null)
+  const lockRef = useRef(false)
+  const [side, setSide] = useState<Side>(null)
   const reduce = useReducedMotion()
-  const { addToCart } = useShop()
-  const [added, setAdded] = useState(false)
-  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia('(min-width: 1024px)').matches)
 
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)')
-    const onChange = () => setIsDesktop(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
+  // The copy panel slides away from the hovered half, revealing its photo.
+  const panelLeft = side === 'left' ? '50%' : side === 'right' ? '0%' : '25%'
 
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
-  const imgY = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['0%', '10%'])
-  const cardY = useTransform(scrollYProgress, [0, 1], reduce || !isDesktop ? [0, 0] : [0, -60])
-
-  const unit = featured.price.split('/')[1]
+  const onMove = (e: React.MouseEvent) => {
+    if (!ref.current) return
+    const r = ref.current.getBoundingClientRect()
+    const x = (e.clientX - r.left) / r.width
+    if (!lockRef.current) {
+      setSide(x < 0.5 ? 'left' : 'right')
+      return
+    }
+    // Over the copy panel: its outer edge (empty padding) flips to the hidden photo,
+    // so the covered half stays reachable while the CTAs remain clickable.
+    if (side === 'left' && x > 1 - EDGE) setSide('right')
+    else if (side === 'right' && x < EDGE) setSide('left')
+  }
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-paper">
-      {/* Soft brand glow behind the visual */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-40 top-10 h-[620px] w-[620px] rounded-full opacity-60 blur-[110px]"
-        style={{ background: 'radial-gradient(circle, rgba(79,185,127,0.28), transparent 65%)' }}
-      />
+    <section
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={() => {
+        lockRef.current = false
+        setSide(null)
+      }}
+      className="relative hidden h-[calc(100svh-48px)] max-h-[960px] min-h-[640px] overflow-hidden bg-ink-900 lg:block"
+      aria-label="Présentation"
+    >
+      {(['left', 'right'] as const).map((key) => {
+        const p = panels[key]
+        const active = side === key
+        return (
+          <div key={key} className={cn('absolute inset-y-0 w-1/2 overflow-hidden', key === 'left' ? 'left-0' : 'right-0')}>
+            <motion.img
+              src={p.src}
+              alt={p.alt}
+              fetchPriority="high"
+              className="absolute inset-0 h-full w-full object-cover will-change-transform"
+              style={{ objectPosition: p.position }}
+              initial={false}
+              animate={{
+                scale: reduce ? 1 : active ? 1.03 : 1.14,
+                filter: active ? `${p.filter} grayscale(0) brightness(1)` : `${p.filter} grayscale(0.35) brightness(0.7)`,
+              }}
+              transition={{ duration: active ? 6 : 1, ease: active ? 'easeOut' : ease }}
+            />
+            {/* Cinematic grading: vignette + bottom fade behind the caption */}
+            <div aria-hidden className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_40%,transparent_45%,rgba(0,0,0,0.45)_100%)]" />
+            <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
 
-      <div className="relative mx-auto grid max-w-[1200px] items-center gap-12 px-6 pb-20 pt-10 sm:pt-14 lg:min-h-[calc(100svh-48px)] lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-16">
-        {/* ── Copy ── */}
-        <div className="text-center lg:text-left">
+            <AnimatePresence>
+              {active && (
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 12 }}
+                  transition={{ duration: 0.6, delay: 0.3, ease }}
+                  className="absolute bottom-12 left-12 right-12 max-w-[480px] text-white"
+                >
+                  <p className="text-sm font-semibold text-gold-300">{p.eyebrow}</p>
+                  <h2 className="mt-2 text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.03em]">{p.title}</h2>
+                  <p className="mt-3 text-[1.0625rem] leading-relaxed text-white/80">{p.text}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Vertical teaser label while the half is only peeking */}
+            <motion.span
+              aria-hidden
+              initial={false}
+              animate={{ opacity: side === null ? 1 : 0 }}
+              className={cn(
+                'absolute top-1/2 -translate-y-1/2 text-xs font-semibold uppercase tracking-[0.25em] text-white/90 [writing-mode:vertical-rl]',
+                key === 'left' ? 'left-7 rotate-180' : 'right-7',
+              )}
+            >
+              {key === 'left' ? 'Le marché' : 'La récolte'}
+            </motion.span>
+          </div>
+        )
+      })}
+
+      {/* Sliding copy panel */}
+      <motion.div
+        onMouseEnter={() => (lockRef.current = true)}
+        onMouseLeave={() => (lockRef.current = false)}
+        initial={false}
+        animate={{ left: panelLeft }}
+        transition={reduce ? { duration: 0 } : { duration: 0.9, ease }}
+        className="absolute inset-y-0 z-10 flex w-1/2 items-center bg-paper shadow-[0_0_80px_rgba(0,0,0,0.35)]"
+      >
+        {/* Edge hint: hovering here reveals the photo hidden under the panel */}
+        <AnimatePresence>
+          {side !== null && (
+            <motion.button
+              key={side}
+              type="button"
+              tabIndex={-1}
+              aria-hidden
+              onClick={() => setSide(side === 'left' ? 'right' : 'left')}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className={cn(
+                'group absolute inset-y-0 flex w-[16%] cursor-pointer items-center',
+                side === 'left' ? 'right-0 justify-end pr-6' : 'left-0 justify-start pl-6',
+              )}
+            >
+              <span
+                className={cn(
+                  'flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400 transition-colors group-hover:text-brand-600 [writing-mode:vertical-rl]',
+                  side === 'right' && 'rotate-180',
+                )}
+              >
+                {side === 'left' ? 'La récolte' : 'Le marché'}
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" />
+              </span>
+            </motion.button>
+          )}
+        </AnimatePresence>
+        <div className="mx-auto w-full max-w-[560px] px-12 xl:px-14">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -66,155 +195,154 @@ export default function HeroSection({ onDiscover }: { onDiscover?: () => void })
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.08, ease }}
-            className="mt-6 text-[clamp(2.75rem,6.2vw,5rem)] font-bold leading-[1.02] tracking-[-0.04em] text-ink-900 text-balance"
+            className="mt-6 text-[clamp(3rem,4.6vw,4.75rem)] font-bold leading-[1.02] tracking-[-0.04em] text-ink-900"
           >
-            Le manioc.{' '}
-            <span className="bg-gradient-to-r from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent">
-              Version Gabon.
-            </span>
+            Le manioc.
+            <br />
+            <span className="bg-gradient-to-r from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent">Version Gabon.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.16, ease }}
-            className="mx-auto mt-6 max-w-[520px] text-[1.1875rem] leading-[1.5] text-ink-500 text-pretty lg:mx-0 lg:text-[1.3125rem]"
+            className="mt-6 text-[1.25rem] leading-[1.5] text-ink-500"
           >
-            Tubercules, bâtons, feuilles et farines récoltés chez nos producteurs, puis livrés frais chez vous en
-            48 heures.
+            Tubercules, bâtons, feuilles et farines récoltés chez nos producteurs, puis livrés frais chez vous en 48 heures.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.24, ease }}
-            className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-6 lg:justify-start"
+            className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3"
           >
-            <Button size="xl" onClick={() => document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button size="xl" onClick={scrollToShop}>
               Commander maintenant
             </Button>
             <Button variant="link" size="lg" onClick={onDiscover}>
-              Découvrir la culture du manioc ›
+              Notre histoire ›
             </Button>
           </motion.div>
 
           <motion.ul
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.34, ease }}
-            className="mx-auto mt-12 grid max-w-[560px] grid-cols-3 divide-x divide-black/10 border-t border-black/10 pt-6 lg:mx-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.34 }}
+            className="mt-10 flex flex-wrap gap-x-6 gap-y-2 border-t border-black/10 pt-6"
           >
-            {trust.map(({ Icon, title, text }) => (
-              <li
-                key={title}
-                className="hover-wiggle flex flex-col items-center gap-1.5 px-2 text-center lg:items-start lg:px-5 lg:text-left lg:first:pl-0"
-              >
-                <Icon className="wiggle-target h-5 w-5 text-brand-600" strokeWidth={1.8} aria-hidden />
-                <span className="text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink-900">{title}</span>
-                <span className="text-xs leading-snug text-ink-500">{text}</span>
+            {trust.map(({ Icon, title }) => (
+              <li key={title} className="hover-wiggle flex items-center gap-2 text-sm font-medium text-ink-700">
+                <Icon className="wiggle-target h-4 w-4 text-brand-600" strokeWidth={2} aria-hidden />
+                {title}
               </li>
             ))}
           </motion.ul>
-        </div>
 
-        {/* ── Visual ── */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.1, ease }}
-          className="relative mx-auto w-full max-w-[560px] lg:max-w-none"
-        >
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[32px] bg-brand-900 shadow-[0_30px_80px_-20px_rgba(15,74,48,0.45)] ring-1 ring-black/5 sm:aspect-[5/4] lg:aspect-[4/5]">
-            <motion.img
-              src="/banniere.jpg"
-              alt="Bâtons de manioc enveloppés dans des feuilles et tubercules frais posés sur des feuilles de manioc"
-              width={1600}
-              height={1067}
-              fetchPriority="high"
-              style={{ y: imgY }}
-              className="absolute inset-x-0 -top-[5%] h-[115%] w-full object-cover object-[42%_50%]"
-            />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/0 to-black/10" />
-
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.6, ease }}
-              className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/85 px-3.5 py-1.5 text-xs font-medium text-ink-900 shadow-sm backdrop-blur-md sm:left-5 sm:top-5"
-            >
-              <span aria-hidden>🌿</span> Récolté ce matin · Woleu-Ntem
-            </motion.div>
-
-            <p className="absolute bottom-5 right-5 hidden max-w-[220px] text-right text-[0.8125rem] font-medium leading-snug text-white/90 sm:block">
-              Bâtons préparés à la main, enveloppés dans les feuilles comme à la maison.
-            </p>
-          </div>
-
-          {/* Floating product card — adds the featured product to the cart */}
-          <motion.div
-            style={{ y: cardY }}
-            initial={{ opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.85, duration: 0.7, ease }}
-            className="absolute -bottom-8 left-4 right-4 sm:right-auto sm:w-[320px] lg:-left-10 lg:bottom-12"
-          >
-            <motion.div
-              animate={reduce ? undefined : { y: [0, -6, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              className="flex items-center gap-3 rounded-[20px] bg-white/95 p-3 pr-4 shadow-[var(--shadow-modal)] ring-1 ring-black/5 backdrop-blur-xl"
-            >
-              <img ref={thumbRef} src={featured.image} alt="" className="h-14 w-14 shrink-0 rounded-[14px] object-cover" />
-              <div className="min-w-0 flex-1">
-                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-gold-600">Le plus commandé</p>
-                <p className="truncate text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink-900">{featured.name}</p>
-                <p className="text-xs text-ink-500 tabular-nums">
-                  {formatFCFA(featured.priceValue)}
-                  {unit && ` / ${unit}`}
-                </p>
-              </div>
+          {/* Explicit toggles: keyboard-friendly, and a hint for mouse users */}
+          <div className="mt-8 flex items-center gap-2 text-sm">
+            {(['left', 'right'] as const).map((k) => (
               <button
-                type="button"
-                onClick={() => {
-                  addToCart(featured, thumbRef.current)
-                  setAdded(true)
-                  window.setTimeout(() => setAdded(false), 1400)
-                }}
-                aria-label={`Ajouter ${featured.name} au panier`}
-                className={`grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-full text-white transition-colors active:scale-90 ${
-                  added ? 'bg-brand-500' : 'bg-ink-900 hover:bg-brand-700'
-                }`}
+                key={k}
+                onClick={() => setSide((s) => (s === k ? null : k))}
+                aria-pressed={side === k}
+                className={cn(
+                  'group inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 transition-colors cursor-pointer',
+                  side === k ? 'bg-ink-900 text-white' : 'bg-black/5 text-ink-700 hover:bg-black/10',
+                )}
               >
-                <motion.span key={added ? 'ok' : 'add'} initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }}>
-                  {added ? <Check className="h-4 w-4" strokeWidth={3} /> : <Plus className="h-4 w-4" />}
-                </motion.span>
+                {k === 'left' && <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" aria-hidden />}
+                {k === 'left' ? 'Le marché' : 'La récolte'}
+                {k === 'right' && <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />}
               </button>
-            </motion.div>
-          </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  )
+}
 
-          {/* Delivery badge */}
-          <motion.div
-            style={{ y: cardY }}
-            initial={{ opacity: 0, scale: 0.8 }}
+/* ───────────────────────── Mobile / tablet: stacked ───────────────────────── */
+
+function MobileHero({ onDiscover }: { onDiscover?: () => void }) {
+  const [side, setSide] = useState<'left' | 'right'>('left')
+  const [touched, setTouched] = useState(false)
+  const reduce = useReducedMotion()
+
+  // Alternate the two photos until the visitor picks one.
+  useEffect(() => {
+    if (touched || reduce) return
+    const t = window.setInterval(() => setSide((s) => (s === 'left' ? 'right' : 'left')), 4500)
+    return () => window.clearInterval(t)
+  }, [touched, reduce])
+
+  const p = panels[side]
+
+  return (
+    <section className="bg-paper px-5 pb-12 pt-10 text-center sm:px-8 lg:hidden">
+      <p className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[0.8125rem] font-medium text-ink-700 shadow-sm ring-1 ring-black/5">
+        <span className="h-2 w-2 rounded-full bg-brand-500" aria-hidden />
+        Nouvelle récolte 2026 disponible
+      </p>
+      <h1 className="mt-5 text-[clamp(2.75rem,11vw,4rem)] font-bold leading-[1.02] tracking-[-0.04em] text-ink-900">
+        Le manioc.
+        <br />
+        <span className="bg-gradient-to-r from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent">Version Gabon.</span>
+      </h1>
+      <p className="mx-auto mt-5 max-w-[520px] text-[1.125rem] leading-[1.5] text-ink-500">
+        Tubercules, bâtons, feuilles et farines récoltés chez nos producteurs, puis livrés frais chez vous en 48 heures.
+      </p>
+      <div className="mt-7 flex flex-col items-center gap-3">
+        <Button size="lg" onClick={scrollToShop}>
+          Commander maintenant
+        </Button>
+        <Button variant="link" onClick={onDiscover}>
+          Notre histoire ›
+        </Button>
+      </div>
+
+      <div className="relative mx-auto mt-10 aspect-[4/5] max-w-[560px] overflow-hidden rounded-[28px] bg-ink-900 shadow-[var(--shadow-modal)] sm:aspect-[4/3]">
+        <AnimatePresence initial={false}>
+          <motion.img
+            key={side}
+            src={p.src}
+            alt={p.alt}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: p.position, filter: p.filter }}
+            initial={{ opacity: 0, scale: 1.08 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1, type: 'spring', stiffness: 260, damping: 18 }}
-            className="absolute -right-4 top-[34%] hidden lg:block"
-          >
-            <motion.div
-              animate={reduce ? undefined : { y: [0, 8, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              whileHover={{ rotate: -4, scale: 1.05 }}
-              className="flex items-center gap-3 rounded-[20px] bg-white/95 px-4 py-3 shadow-[var(--shadow-modal)] ring-1 ring-black/5 backdrop-blur-xl"
-            >
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-xl" aria-hidden>
-                🛵
-              </span>
-              <span>
-                <span className="block text-[0.9375rem] font-semibold text-ink-900">Livraison offerte</span>
-                <span className="block text-xs text-ink-500">dès 10 000 FCFA</span>
-              </span>
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.9, ease }}
+          />
+        </AnimatePresence>
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-6 text-left text-white">
+          <AnimatePresence mode="wait">
+            <motion.div key={side} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+              <p className="text-sm font-semibold text-gold-300">{p.eyebrow}</p>
+              <p className="mt-1 text-[1.5rem] font-semibold leading-tight tracking-[-0.02em]">{p.title}</p>
             </motion.div>
-          </motion.div>
-        </motion.div>
+          </AnimatePresence>
+          <div className="mt-4 inline-flex rounded-full bg-white/15 p-1 backdrop-blur-md">
+            {(['left', 'right'] as const).map((k) => (
+              <button
+                key={k}
+                onClick={() => {
+                  setTouched(true)
+                  setSide(k)
+                }}
+                aria-pressed={side === k}
+                className={cn(
+                  'rounded-full px-4 py-1.5 text-sm font-medium transition-colors cursor-pointer',
+                  side === k ? 'bg-white text-ink-900' : 'text-white/85',
+                )}
+              >
+                {k === 'left' ? 'Le marché' : 'La récolte'}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )
