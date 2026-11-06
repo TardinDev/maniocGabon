@@ -102,6 +102,17 @@ const docs: Record<LegalKind, Doc> = {
               , redimensionnée et étalonnée.
             </li>
             <li>
+              « Women peeling cassava tubers » par Chidinma0025,{' '}
+              <a className="text-brand-600 underline" href="https://commons.wikimedia.org/wiki/File:Women_peeling_cassava_tubers.jpg" target="_blank" rel="noopener noreferrer">
+                Wikimedia Commons
+              </a>
+              , licence{' '}
+              <a className="text-brand-600 underline" href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener noreferrer">
+                CC BY-SA 4.0
+              </a>
+              , recadrée et étalonnée.
+            </li>
+            <li>
               « Cassava chips from Kerala » par Ranjithsiji,{' '}
               <a className="text-brand-600 underline" href="https://commons.wikimedia.org/wiki/File:Cassava_chips_from_Kerala.jpg" target="_blank" rel="noopener noreferrer">
                 Wikimedia Commons
